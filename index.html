@@ -5,23 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, user-scalable=no">
     <title>XyCloud | NextGeneration</title>
     
-    <!-- 1. Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- 3. Interact.js -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     
-    <!-- 
-      4. Firebase SDK (PENTING)
-    -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      // PERUBAHAN: Kita butuh onSnapshot untuk mendengarkan 'answer'
+      import { getFirestore, doc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       
-      // --- PASTE KONFIGURASI FIREBASE-MU DI SINI ---
+      // --- KONFIGURASI FIREBASE-MU (DARI v27) ---
       const firebaseConfig = {
         apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
         authDomain: "kall-e4441.firebaseapp.com",
@@ -42,17 +37,15 @@
         window.createDocRef = (db, collection, id) => doc(db, collection, id);
         window.setDocCommand = setDoc;
         window.serverTimestampCommand = serverTimestamp;
+        window.onSnapshotCommand = onSnapshot; // <-- FUNGSI BARU
         
-        console.log("Firebase v31 Client Loaded.");
+        console.log("Firebase v32 Client Loaded.");
       } catch (e) {
         console.error("Firebase GAGAL di-load.", e);
         alert("Error Konfigurasi Firebase! Cek konsol (F12).");
       }
     </script>
     
-    <!-- 
-      5. CSS Internal Lengkap
-    -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         :root {
@@ -150,7 +143,6 @@
 </head>
 <body class="bg-black text-white overflow-hidden h-screen">
 
-    <!-- 1. Halaman Login -->
     <div id="login-page" class="min-h-screen flex flex-col">
         <header id="login-header">
             <div class="login-logo">Xy<span>Cloud</span></div>
@@ -202,18 +194,17 @@
         </div>
     </div>
 
-    <!-- 2. Halaman Remote Control -->
     <div id="remote-page" class="hidden h-screen flex flex-col relative">
-        <!-- Konten Layar Remote -->
         <div class="flex-grow bg-black flex items-center justify-center p-0 overflow-auto relative h-full">
             <div id="remote-content" class="w-full h-full aspect-video bg-gray-700 relative overflow-hidden">
-                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" 
-                     class="w-full h-full object-cover" 
-                     alt="Simulasi stream Windows 11">
+                
+                <video id="video-stream" class="w-full h-full object-cover" autoplay playsinline muted>
+                    </video>
                 
                 <div id="stats-overlay" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm p-2 rounded-lg font-mono text-sm text-green-400">
                     <div>Ping: <span class="font-bold">15ms</span></div>
                     <div>FPS: <span class="font-bold">120</span></div>
+                    <div id="webrtc-status" class="text-yellow-400">Status: Idle...</div>
                 </div>
                 
                 <div id="custom-ui-overlay" class="absolute inset-0 z-30">
@@ -253,7 +244,6 @@
             <button id="exit-customize-btn" class="customize-btn exit-btn"><i class="fas fa-check mr-2"></i> Simpan & Keluar</button>
         </div>
         
-        <!-- Modal Pengaturan -->
         <div id="settings-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
             <div class="modal-content w-full max-w-2xl p-6 rounded-lg shadow-2xl relative overflow-y-auto max-h-screen">
                 <button id="close-settings-modal" class="modal-close-btn"><i class="fas fa-times fa-lg"></i></button>
@@ -267,13 +257,12 @@
                 </div>
                 
                 <div class="space-y-6">
-                    <!-- Tab Performance -->
                     <div id="tab-performance" class="tab-content active">
                         <div class="mb-4">
                             <label class="form-label">Resolusi Stream</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-res="720p">720p</button>
-                                <button class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
+                                <button id="res-1080p-btn" class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
                                 <button class="choice-btn" data-res="480p">480p</button>
                             </div>
                         </div>
@@ -295,7 +284,6 @@
                         <div class="flex items-center justify-between"><label class="text-sm">Tampilkan Stats (Ping/FPS)</label><label class="switch"><input type="checkbox" id="toggle-stats-btn" checked><span class="slider"></span></label></div>
                     </div>
                     
-                    <!-- Tab Controls -->
                     <div id="tab-controls" class="tab-content">
                         <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
                         
@@ -323,7 +311,6 @@
                         <div class="flex items-center justify-between mt-4"><label class="text-sm">Gamepad Fisik Passthrough</label><label class="switch"><input type="checkbox" id="toggle-gamepad-btn" checked><span class="slider"></span></label></div>
                     </div>
 
-                    <!-- Tab Layouts -->
                     <div id="tab-layouts" class="tab-content">
                         <div class="mb-4">
                             <label class="form-label">Transparansi Tombol: <span id="opacity-value">50</span>%</label>
@@ -386,7 +373,6 @@
             </div>
         </div>
 
-        <!-- Keyboard BINDING (Popup) -->
         <div id="binding-keyboard-modal" class="hidden modal fixed inset-0 p-4 z-55 flex flex-col items-center justify-center opacity-0 overflow-auto">
             <div class="w-full max-w-5xl p-4 bg-gray-800 rounded-xl border border-gray-700">
                 <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="F1">F1</span><span class="kbd-key" data-key="F2">F2</span><span class="kbd-key" data-key="F3">F3</span><span class="kbd-key" data-key="F4">F4</span><span class="kbd-key" data-key="F5">F5</span><span class="kbd-key" data-key="F6">F6</span><span class="kbd-key" data-key="F7">F7</span><span class="kbd-key" data-key="F8">F8</span><span class="kbd-key" data-key="F9">F9</span><span class="kbd-key" data-key="F10">F10</span><span class="kbd-key" data-key="F11">F11</span><span class="kbd-key" data-key="F12">F12</span></div>
@@ -399,7 +385,6 @@
             <button id="close-binding-keyboard-btn" class="mt-4 bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold">Batal</button>
         </div>
         
-        <!-- Modal Pilihan Kontrol -->
         <div id="add-joystick-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
             <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
                 <button id="close-add-joystick-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
@@ -411,7 +396,6 @@
             </div>
         </div>
 
-        <!-- Modal Edit Tombol -->
         <div id="edit-key-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
             <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
                 <button id="close-edit-key-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
@@ -461,12 +445,10 @@
             </div>
         </div>
 
-        <!-- Keyboard SLIDING (Split) -->
         <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
             <button id="close-sliding-keyboard-btn"><i class="fas fa-times"></i></button>
             <div id="sliding-keyboard-layers" class="w-full max-w-5xl mx-auto flex justify-between">
                 
-                <!-- === KIRI === -->
                 <div class="kbd-left-half">
                     <div id="kbd-layer-main-left" class="kbd-layer active">
                         <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
@@ -488,7 +470,6 @@
                         <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="©">©</span><span class="kbd-key" data-key="®">®</span><span class="kbd-key" data-key="™">™</span></div>
                     </div>
                 </div>
-                <!-- === KANAN === -->
                 <div class="kbd-right-half">
                     <div id="kbd-layer-main-right" class="kbd-layer active">
                         <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
@@ -511,10 +492,7 @@
             </div>
         </div>
 
-    </div> <!-- TUTUP DARI #remote-page -->
-    
-    <!-- Modal Premium (GLOBAL) -->
-    <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+    </div> <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
         <div class="modal-content w-full max-w-4xl p-0 rounded-lg shadow-2xl relative bg-gray-900 border border-gray-700 overflow-hidden">
             <button id="close-premium-modal" class="modal-close-btn z-10"><i class="fas fa-times fa-lg"></i></button>
             <div class="p-8 text-center">
@@ -558,21 +536,20 @@
         </div>
     </div>
 
-    <!-- Notifikasi Toast (GLOBAL) -->
     <div id="toast-notification" class="bg-indigo-600 text-white py-3 px-5 rounded-lg shadow-lg">
         <span id="toast-message"></span>
     </div>
 
-    <!-- 
-      Logika JavaScript v31 (PERBAIKAN TYPO)
-    -->
     <script type="module">
         
         // --- 1. IMPORT FIREBASE ---
+        // (Diimpor dari script di <head>)
+        // *** PERBAIKAN: Kita import di sini, BUKAN di head ***
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- 2. KONFIGURASI FIREBASE ---
+        // (Config-mu dari v27)
         const firebaseConfig = {
           apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
           authDomain: "kall-e4441.firebaseapp.com",
@@ -887,9 +864,7 @@
                     if (loadingSpinner) loadingSpinner.classList.add('hidden');
                 }
             });
-        } else {
-            console.error("GAGAL: Tombol 'connect-btn' tidak ditemukan.");
-        }
+        } 
         
         if (helpBtn) {
              helpBtn.addEventListener('click', () => {
@@ -917,7 +892,7 @@
         if (settingsBtn) settingsBtn.addEventListener('click', () => openModal(settingsModal));
         if (closeSettingsModal) closeSettingsModal.addEventListener('click', () => closeModal(settingsModal));
         
-        // PERBAIKAN v31: Mengganti 'tdbButtons' menjadi 'tabButtons'
+        // PERBAIKAN v31: 'tdbButtons' -> 'tabButtons'
         const tabButtons = document.querySelectorAll('.tab-btn'); 
         const tabContents = document.querySelectorAll('.tab-content');
         if(tabButtons && tabContents) {
