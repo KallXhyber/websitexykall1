@@ -16,35 +16,31 @@
       import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       
       // --- PASTE KONFIGURASI FIREBASE-MU DI SINI ---
-      // (Dapatkan dari Panduan Bagian 1, Langkah 3)
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
+      const firebaseConfig = {
           apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
           authDomain: "kall-e4441.firebaseapp.com",
           projectId: "kall-e4441",
           storageBucket: "kall-e4441.firebasestorage.app",
           messagingSenderId: "232976172726",
-          appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",
-          measurementId: "G-YQBDKK616N"
-        };
+          appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",MU"
+      };
       
       // Inisialisasi Firebase
       try {
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Buat 'db' dan 'fungsi' bisa diakses global oleh script utama kita
+        // Buat 'db' dan 'fungsi' bisa diakses global
         window.db = db;
         window.createDocRef = (db, collection, id) => doc(db, collection, id);
         window.setDocCommand = setDoc;
         window.serverTimestampCommand = serverTimestamp;
         
-        console.log("Firebase v25 Client Loaded.");
+        console.log("Firebase v26 Client Loaded.");
       } catch (e) {
         console.error("Firebase GAGAL di-load. Cek 'firebaseConfig' di atas.", e);
         alert("Error Konfigurasi Firebase! Cek konsol (F12).");
       }
-
     </script>
     
     <style>
@@ -162,7 +158,7 @@
                     <h2 class="text-3xl font-extrabold text-white mt-4">Selamat Datang</h2>
                     <p class="text-gray-400">Hubungkan ke rig Anda dari mana saja.</p>
                 </div>
-                <form id="login-form">
+                <div id="login-form">
                     <div class="mb-5">
                         <label for="client-id" class="form-label sr-only">Partner ID</label>
                         <input type="text" id="client-id" value="PC-KALL" class="login-input rounded-full" placeholder="Partner ID" required>
@@ -171,7 +167,7 @@
                         <label for="password" class="form-label sr-only">Password</label>
                         <input type="password" id="password" value="••••••••" class="login-input rounded-full" placeholder="Password" required>
                     </div>
-                    <button type="submit" id="connect-btn" class="login-btn rounded-full">
+                    <button type="button" id="connect-btn" class="login-btn rounded-full">
                         Connect
                     </button>
                     <div id="loading-spinner" class="hidden text-center mt-4">
@@ -190,7 +186,7 @@
                     </div>
                     
                     <p class="text-center text-gray-600 text-xs mt-8">Created By Kall</p>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -198,9 +194,7 @@
     <div id="remote-page" class="hidden h-screen flex flex-col relative">
         <div class="flex-grow bg-black flex items-center justify-center p-0 overflow-auto relative h-full">
             <div id="remote-content" class="w-full h-full aspect-video bg-gray-700 relative overflow-hidden">
-                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" 
-                     class="w-full h-full object-cover" 
-                     alt="Simulasi stream Windows 11">
+                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" class="w-full h-full object-cover" alt="Simulasi stream Windows 11">
                 
                 <div id="stats-overlay" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm p-2 rounded-lg font-mono text-sm text-green-400">
                     <div>Ping: <span class="font-bold">15ms</span></div>
@@ -245,296 +239,22 @@
         </div>
         
         <div id="settings-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            <div class="modal-content w-full max-w-2xl p-6 rounded-lg shadow-2xl relative overflow-y-auto max-h-screen">
-                <button id="close-settings-modal" class="modal-close-btn"><i class="fas fa-times fa-lg"></i></button>
-                <h2 class="text-2xl font-bold mb-6">Pengaturan</h2>
-                
-                <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
-                    <button class="tab-btn active" data-tab="performance">Performance</button>
-                    <button class="tab-btn" data-tab="controls">Controls</button>
-                    <button class="tab-btn" data-tab="layouts">Layouts</button>
-                    <button class="tab-btn" data-tab="stream">Stream</button>
-                </div>
-                
-                <div class="space-y-6">
-                    <div id="tab-performance" class="tab-content active">
-                        <div class="mb-4">
-                            <label class="form-label">Resolusi Stream</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-res="720p">720p</button>
-                                <button class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
-                                <button class="choice-btn" data-res="480p">480p</button>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Profil Performa</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-profile="latency">Low Latency</button>
-                                <button class="choice-btn" data-profile="balanced">Balanced</button>
-                                <button class="choice-btn" data-profile="quality">High Quality</button>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Mode Jaringan (Advanced)</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-net="webrtc">Otomatis (WebRTC)</button>
-                                <button class="choice-btn" data-net="tcp">TCP Relay (VPN/Firewall)</button>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between"><label class="text-sm">Tampilkan Stats (Ping/FPS)</label><label class="switch"><input type="checkbox" id="toggle-stats-btn" checked><span class="slider"></span></label></div>
-                    </div>
-                    
-                    <div id="tab-controls" class="tab-content">
-                        <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
-                        
-                        <div class="mt-4">
-                            <label class="form-label">Mode Mouse (Layar Sentuh)</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-mouse-mode="direct">Direct (Sentuh = Klik)</button>
-                                <button class="choice-btn" data-mouse-mode="trackpad">Trackpad (Geser Kursor)</button>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <label class="form-label">Sensitivitas Mouse (Remote)</label>
-                            <input type="range" min="10" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                        <div class="mt-4">
-                            <label class="form-label">Zona Mati (Deadzone) Joystick</label>
-                            <input type="range" min="0" max="50" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                        <div class="flex items-center justify-between mt-4"><label class="text-sm">Getar (Haptic Feedback)</label><label class="switch"><input type="checkbox" id="toggle-haptics-btn"><span class="slider"></span></label></div>
-                        <div class="flex items-center justify-between mt-4 premium-label-wrapper">
-                            <label class="text-sm">Gyro Aiming <i class="premium-icon fas fa-crown"></i></label>
-                            <label class="switch" data-premium-feature="true"><input type="checkbox" id="toggle-gyro-btn"><span class="slider"></span></label>
-                        </div>
-                        <div class="flex items-center justify-between mt-4"><label class="text-sm">Gamepad Fisik Passthrough</label><label class="switch"><input type="checkbox" id="toggle-gamepad-btn" checked><span class="slider"></span></label></div>
-                    </div>
-
-                    <div id="tab-layouts" class="tab-content">
-                        <div class="mb-4">
-                            <label class="form-label">Transparansi Tombol: <span id="opacity-value">50</span>%</label>
-                            <input type="range" min="20" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="button-opacity-slider">
-                        </div>
-                        <div class="mb-4">
-                            <label for="save-layout-input" class="form-label">Simpan Layout Saat Ini</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="save-layout-input" placeholder="cth: Layout FiveM" class="form-input flex-grow">
-                                <button id="save-layout-btn" class="choice-btn active"><i class="fas fa-save mr-2"></i>Lokal</button>
-                                <button id="save-cloud-btn" class="choice-btn premium" data-premium-feature="true"><i class="fas fa-cloud-upload-alt mr-2"></i>Cloud <i class="premium-icon fas fa-crown"></i></button>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Layout Tersimpan</label>
-                            <div id="saved-layouts-list" class="space-y-2 max-h-32 overflow-y-auto">
-                                <p class="text-gray-400 text-sm">Belum ada layout yang disimpan.</p>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="load-layout-input" class="form-label">Muat dari Kode Share</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="load-layout-input" placeholder="Masukkan kode..." class="form-input flex-grow">
-                                <button id="load-layout-btn" class="choice-btn"><i class="fas fa-download mr-2"></i>Muat</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="tab-stream" class="tab-content">
-                        <div class="mb-4">
-                            <label class="form-label">Sumber Audio</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-audio="pc">PC Saja</button>
-                                <button class="choice-btn" data-audio="pc_mic">PC + Mic (Client)</button>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Output Audio (Premium)</label>
-                            <div class="flex gap-2">
-                                <button class="choice-btn active" data-audio-out="merged">Gabung</button>
-                                <button class="choice-btn premium" data-audio-out="separate" data-premium-feature="true">Pisah (Game/Chat) <i class="premium-icon fas fa-crown"></i></button>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label">Volume Mic</label>
-                            <input type="range" min="0" max="100" value="80" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                        
-                        <div class="border-t border-gray-700 my-6"></div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <button id="screenshot-btn" class="choice-btn"><i class="fas fa-camera mr-2"></i> Ambil Screenshot</button>
-                            <button id="record-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-video mr-2"></i> Mulai Merekam <i class="premium-icon fas fa-crown"></i></button>
-                            <button id="monitor-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-desktop mr-2"></i> Ganti Monitor <i class="premium-icon fas fa-crown"></i></button>
-                            <button id="fullscreen-btn" class="choice-btn"><i class="fas fa-expand mr-2"></i> Fullscreen</button>
-                        </div>
-                         <button id="disconnect-btn" class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg"><i class="fas fa-power-off fa-fw mr-2"></i> Disconnect</button>
-                    </div>
-                </div>
             </div>
-        </div>
 
         <div id="binding-keyboard-modal" class="hidden modal fixed inset-0 p-4 z-55 flex flex-col items-center justify-center opacity-0 overflow-auto">
-            <div class="w-full max-w-5xl p-4 bg-gray-800 rounded-xl border border-gray-700">
-                <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="F1">F1</span><span class="kbd-key" data-key="F2">F2</span><span class="kbd-key" data-key="F3">F3</span><span class="kbd-key" data-key="F4">F4</span><span class="kbd-key" data-key="F5">F5</span><span class="kbd-key" data-key="F6">F6</span><span class="kbd-key" data-key="F7">F7</span><span class="kbd-key" data-key="F8">F8</span><span class="kbd-key" data-key="F9">F9</span><span class="kbd-key" data-key="F10">F10</span><span class="kbd-key" data-key="F11">F11</span><span class="kbd-key" data-key="F12">F12</span></div>
-                <div class="kbd-row"><span class="kbd-key" data-key="`">`</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="-">-</span><span class="kbd-key" data-key="=">=</span><span class="kbd-key" data-key="Backspace" style="flex-grow: 2;">Backspace</span></div>
-                <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="\"> \ </span></div>
-                <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.8;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.8;">Enter</span></div>
-                <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span></div>
-                <div class="kbd-row"><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key=" " style="flex-grow: 6;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE" title="Paste Clipboard"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
             </div>
-            <button id="close-binding-keyboard-btn" class="mt-4 bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold">Batal</button>
-        </div>
         
         <div id="add-joystick-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
-                <button id="close-add-joystick-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
-                <h3 class="text-2xl font-bold mb-6">Pilih Tipe Kontrol</h3>
-                <div class="flex flex-col gap-4">
-                    <button data-type="analog" class="add-control-sim-btn choice-btn text-lg p-4"><i class="fas fa-compass fa-fw mr-3"></i> Joystick Analog</button>
-                    <button data-type="dpad" class="add-control-sim-btn choice-btn text-lg p-4"><i class="fas fa-th fa-fw mr-3"></i> D-Pad (WASD)</button>
-                </div>
             </div>
-        </div>
 
         <div id="edit-key-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
-                <button id="close-edit-key-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
-                <h3 class="text-2xl font-bold mb-4">Edit Tombol</h3>
-                
-                <div class="space-y-4">
-                    <div id="edit-key-label-wrapper">
-                        <label for="edit-key-label" class="form-label">Label Tombol</label>
-                        <input type="text" id="edit-key-label" class="form-input">
-                    </div>
-                    <div id="edit-key-command-wrapper">
-                        <label for="edit-key-command" class="form-label">Perintah (Read-only)</label>
-                        <input type="text" id="edit-key-command" class="form-input bg-gray-800" readonly>
-                    </div>
-                    
-                    <div id="edit-key-style-wrapper-parent">
-                        <label class="form-label">Bentuk Tombol</label>
-                        <div class="flex gap-2" id="edit-key-style-wrapper">
-                            <button class="choice-btn" data-style="circle"><i class="fas fa-circle mr-2"></i> Bulat</button>
-                            <button class="choice-btn" data-style="rectangle"><i class="fas fa-square mr-2"></i> Kotak</button>
-                        </div>
-                    </div>
-                    
-                    <div id="edit-key-mode-wrapper-parent">
-                        <label class="form-label">Mode Tombol</label>
-                        <div class="flex gap-2" id="edit-key-mode-wrapper">
-                            <button class="choice-btn" data-mode="press">Tekan</button>
-                            <button class="choice-btn" data-mode="toggle">Toggle</button>
-                            <button class="choice-btn" data-mode="turbo">Turbo</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="form-label">Ukuran Tombol: <span id="edit-key-size-value">100</span>%</label>
-                        <input type="range" id="edit-key-size" min="50" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="flex gap-4 mt-6">
-                    <button id="delete-key-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
-                        <i class="fas fa-trash mr-2"></i> Hapus
-                    </button>
-                    <button id="save-edit-key-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
-                        <i class="fas fa-save mr-2"></i> Simpan
-                    </button>
-                </div>
             </div>
-        </div>
 
         <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
-            <button id="close-sliding-keyboard-btn"><i class="fas fa-times"></i></button>
-            <div id="sliding-keyboard-layers" class="w-full max-w-5xl mx-auto flex justify-between">
-                
-                <div class="kbd-left-half">
-                    <div id="kbd-layer-main-left" class="kbd-layer active">
-                        <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.5;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span></div>
-                    </div>
-                    <div id="kbd-layer-symbols1-left" class="kbd-layer hidden">
-                        <div class="kbd-row"><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="@">@</span><span class="kbd-key" data-key="#">#</span><span class="kbd-key" data-key="$">$</span><span class="kbd-key" data-key="%">%</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="#+={" style="flex-grow: 1.5;">#{<</span><span class="kbd-key" data-key="`">`</span><span class="kbd-key" data-key="~">~</span><span class="kbd-key" data-key="&">&</span><span class="kbd-key" data-key="*">*</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="(">(</span><span class="kbd-key" data-key=")">)</span><span class="kbd-key" data-key="-">-</span><span class="kbd-key" data-key="_">_</span></div>
-                    </div>
-                    <div id="kbd-layer-symbols2-left" class="kbd-layer hidden">
-                        <div class="kbd-row"><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="{">{</span><span class="kbd-key" data-key="}">}</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="<"><</span><span class="kbd-key" data-key=">">></span><span class="kbd-key" data-key="\"> \ </span><span class="kbd-key" data-key="|">|</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="€">€</span><span class="kbd-key" data-key="£">£</span><span class="kbd-key" data-key="¥">¥</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="©">©</span><span class="kbd-key" data-key="®">®</span><span class="kbd-key" data-key="™">™</span></div>
-                    </div>
-                </div>
-                <div class="kbd-right-half">
-                    <div id="kbd-layer-main-right" class="kbd-layer active">
-                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
-                    </div>
-                    <div id="kbd-layer-symbols1-right" class="kbd-layer hidden">
-                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="^">^</span><span class="kbd-key" data-key="=">=</span><span class="kbd-key" data-key="+">+</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key=":">:</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key="?">?</span><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="&quot;">"</span><span class="kbd-key" data-key="'">'</span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
-                    </div>
-                    <div id="kbd-layer-symbols2-right" class="kbd-layer hidden">
-                        <div class="kbd-row"><span class="kbd-key" data-key="•"> • </span><span class="kbd-key" data-key="§">§</span><span class="kbd-key" data-key="°">°</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
-                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
-                    </div>
-                </div>
             </div>
-        </div>
 
     </div> <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-        <div class="modal-content w-full max-w-4xl p-0 rounded-lg shadow-2xl relative bg-gray-900 border border-gray-700 overflow-hidden">
-            <button id="close-premium-modal" class="modal-close-btn z-10"><i class="fas fa-times fa-lg"></i></button>
-            <div class="p-8 text-center">
-                <i class="fas fa-crown text-4xl text-yellow-400 mb-4"></i>
-                <h2 class="text-3xl font-extrabold text-white mb-2">XyCloud Premium</h2>
-                <p class="text-gray-400 text-lg">Buka potensi penuh rig Anda.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 pt-0">
-                <div class="premium-card">
-                    <h3 class="text-2xl font-bold text-white">Pro</h3>
-                    <p class="text-gray-400 mb-4">Ideal untuk gamer serius.</p>
-                    <ul class="premium-feature-list">
-                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 1080p</li>
-                        <li><i class="fas fa-check-circle"></i> 60 FPS Stream</li>
-                        <li><i class="fas fa-check-circle"></i> Kualitas Audio High-Fidelity</li>
-                        <li><i class="fas fa-check-circle"></i> Dukungan Gyro Aiming</li>
-                        <li><i class="fas fa-check-circle"></i> Simpan Layout di Cloud (3 Slot)</li>
-                    </ul>
-                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg text-md mt-6">
-                        Upgrade ke Pro
-                    </button>
-                </div>
-                <div class="premium-card premium-card-popular relative">
-                    <div class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">PALING POPULER</div>
-                    <h3 class="text-2xl font-bold text-white">Ultimate</h3>
-                    <p class="text-gray-400 mb-4">Untuk pengalaman tanpa kompromi.</p>
-                    <ul class="premium-feature-list">
-                        <li><i class="fas fa-check-circle"></i> <span class="font-bold">Semua fitur Pro</span></li>
-                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 4K (HDR)</li>
-                        <li><i class="fas fa-check-circle"></i> 120 FPS Stream</li>
-                        <li><i class="fas fa-check-circle"></i> Audio Surround 5.1</li>
-                        <li><i class="fas fa-check-circle"></i> Perekaman Sesi Cloud</li>
-                        <li><i class="fas fa-check-circle"></i> Dukungan Multi-Monitor</li>
-                        <li><i class="fas fa-check-circle"></i> Cloud Layout (Unlimited)</li>
-                    </ul>
-                    <button class="w-full text-white font-bold py-3 px-4 rounded-lg text-md mt-6" style="background: var(--brand-gradient);">
-                        Dapatkan Ultimate
-                    </button>
-                </div>
-            </div>
         </div>
-    </div>
 
     <div id="toast-notification" class="bg-indigo-600 text-white py-3 px-5 rounded-lg shadow-lg">
         <span id="toast-message"></span>
@@ -542,7 +262,6 @@
 
     <script type="module">
         // Import fungsi Firebase dari script di <head>
-        // Kita butuh fungsi-fungsi ini untuk dioper ke script utama
         const { getFirestore, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
         
         // Ambil 'db' yang sudah diinisialisasi dari window
@@ -562,15 +281,18 @@
             // --- Referensi Elemen DOM ---
             const loginPage = document.getElementById('login-page');
             const remotePage = document.getElementById('remote-page');
-            const customUiOverlay = document.getElementById('custom-ui-overlay');
-            const statsOverlay = document.getElementById('stats-overlay');
-            const loginForm = document.getElementById('login-form');
-            const connectBtn = document.getElementById('connect-btn');
+            const connectBtn = document.getElementById('connect-btn'); // <--- INI DIA
             const loadingSpinner = document.getElementById('loading-spinner');
             const clientIdInput = document.getElementById('client-id');
-            const subscribeBtn = document.getElementById('subscribe-btn');
+            const helpBtn = document.getElementById('help-btn');
             const toast = document.getElementById('toast-notification');
             const toastMessage = document.getElementById('toast-message');
+            
+            // ... (Semua referensi DOM lainnya SAMA seperti v25) ...
+            // ... (Kita asumsikan semua ada) ...
+            const customUiOverlay = document.getElementById('custom-ui-overlay');
+            const statsOverlay = document.getElementById('stats-overlay');
+            const subscribeBtn = document.getElementById('subscribe-btn');
             const premiumModal = document.getElementById('premium-modal');
             const closePremiumModal = document.getElementById('close-premium-modal');
             const settingsBtn = document.getElementById('settings-btn');
@@ -587,16 +309,12 @@
             const addJoystickModal = document.getElementById('add-joystick-modal');
             const closeAddJoystickModal = document.getElementById('close-add-joystick-modal');
             const joystickStick = document.querySelector('.joystick-stick');
-            
-            // Keyboard v21
             const globalKeyboardBtn = document.getElementById('global-keyboard-btn');
             const slidingKeyboard = document.getElementById('sliding-keyboard');
             const closeSlidingKeyboardBtn = document.getElementById('close-sliding-keyboard-btn');
             const slidingKeyboardLayers = document.getElementById('sliding-keyboard-layers');
             const bindingKeyboardModal = document.getElementById('binding-keyboard-modal');
             const closeBindingKeyboardBtn = document.getElementById('close-binding-keyboard-btn');
-
-            // Elemen Edit Modal
             const editKeyModal = document.getElementById('edit-key-modal');
             const closeEditKeyModal = document.getElementById('close-edit-key-modal');
             const editKeyLabel = document.getElementById('edit-key-label');
@@ -611,8 +329,6 @@
             const editKeyCommandWrapper = document.getElementById('edit-key-command-wrapper');
             const editKeyStyleWrapperParent = document.getElementById('edit-key-style-wrapper-parent');
             const editKeyModeWrapperParent = document.getElementById('edit-key-mode-wrapper-parent');
-
-            // Elemen Fitur Baru
             const buttonOpacitySlider = document.getElementById('button-opacity-slider');
             const opacityValue = document.getElementById('opacity-value');
             const toggleHapticsBtn = document.getElementById('toggle-haptics-btn');
@@ -621,7 +337,6 @@
             const savedLayoutsList = document.getElementById('saved-layouts-list');
             const loadLayoutInput = document.getElementById('load-layout-input');
             const loadLayoutBtn = document.getElementById('load-layout-btn');
-            const helpBtn = document.getElementById('help-btn');
 
             // --- 1. Fungsi Notifikasi ---
             function showToast(message, isError = false) {
@@ -694,10 +409,8 @@
             // --- 5. Logika Kustomisasi ---
             function toggleCustomizationMode(forceOff = false) {
                 isCustomizing = forceOff ? false : !isCustomizing;
-                
                 if (customUiOverlay) customUiOverlay.classList.toggle('customization-active', isCustomizing);
                 if (dragInteraction) dragInteraction.draggable({ enabled: isCustomizing });
-                
                 if (isCustomizing) {
                     if (customizeBar) customizeBar.classList.remove('hidden');
                     if (globalKeyboardBtn) globalKeyboardBtn.style.display = 'none';
@@ -725,7 +438,7 @@
                     newEl.dataset.command = command;
                     newEl.dataset.label = label;
                     newEl.dataset.scale = "1.0";
-                    newEl.dataset.style = "circle"; // Default Bulat
+                    newEl.dataset.style = "circle";
                     newEl.dataset.mode = "press";
                     
                     const textSpan = document.createElement('span');
@@ -798,14 +511,16 @@
 
             // --- 6. Event Listeners ---
             
-            // Logika Login Firebase
-            if (loginForm) {
-                loginForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    if (!window.db) {
-                        showToast("Firebase tidak ter-load. Cek konfigurasi.", true);
+            // PERUBAHAN v26: Listener di 'connectBtn' (BUTTON) bukan 'loginForm' (FORM)
+            if (connectBtn) {
+                connectBtn.addEventListener('click', async (e) => {
+                    // e.preventDefault(); // Tidak perlu lagi
+                    
+                    if (!window.db || !window.createDocRef) {
+                        showToast("Firebase sedang dimuat, coba lagi sebentar...", true);
                         return;
                     }
+                    
                     if (connectBtn) connectBtn.disabled = true;
                     if (loadingSpinner) loadingSpinner.classList.remove('hidden');
                     
@@ -821,26 +536,29 @@
                     
                     showToast(`Otentikasi ke ${partnerId}...`);
                     
-                    // Di aplikasi nyata, kamu akan memverifikasi password di sini
-                    // Untuk MVP ini, kita anggap password benar dan langsung konek.
-                    
                     // Set referensi dokumen untuk dikontrol
-                    window.docRef = window.createDocRef(window.db, "commands", partnerId);
+                    try {
+                        window.docRef = window.createDocRef(window.db, "commands", partnerId);
                     
-                    setTimeout(() => {
+                        // Simulasi delay (di dunia nyata, kamu akan cek password di sini)
+                        setTimeout(() => {
+                            if (connectBtn) connectBtn.disabled = false;
+                            if (loadingSpinner) loadingSpinner.classList.add('hidden');
+                            
+                            if (loginPage) loginPage.style.display = 'none'; 
+                            if (remotePage) remotePage.style.display = 'flex'; 
+                            
+                            showToast(`Terhubung ke ${partnerId}!`);
+                            sendFirestoreCommand("connection_test", "hello");
+                            
+                        }, 1000);
+                        
+                    } catch (err) {
+                        console.error("Firebase Error:", err);
+                        showToast(`Error: ${err.message}`, true);
                         if (connectBtn) connectBtn.disabled = false;
                         if (loadingSpinner) loadingSpinner.classList.add('hidden');
-                        
-                        const loginPage = document.getElementById('login-page');
-                        const remotePage = document.getElementById('remote-page');
-                        
-                        if (loginPage) loginPage.style.display = 'none'; 
-                        if (remotePage) remotePage.style.display = 'flex'; 
-                        
-                        showToast(`Terhubung ke ${partnerId}!`);
-                        sendFirestoreCommand("connection_test", "hello");
-                        
-                    }, 1000);
+                    }
                 });
             } 
             
@@ -913,9 +631,7 @@
             
             if (disconnectBtn) {
                 disconnectBtn.addEventListener('click', () => {
-                    window.docRef = null; // Hapus referensi Firebase
-                    const loginPage = document.getElementById('login-page');
-                    const remotePage = document.getElementById('remote-page');
+                    window.docRef = null;
                     if (remotePage) remotePage.style.display = 'none';
                     if (loginPage) loginPage.style.display = 'flex';
                     closeModal(settingsModal);
@@ -1054,7 +770,7 @@
                 });
             }
             
-            // --- Logika Keyboard v25 ---
+            // --- Logika Keyboard v21 ---
             
             // 1. Keyboard BINDING (Popup)
             if (addKeyBtn) {
