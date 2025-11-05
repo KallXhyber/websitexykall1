@@ -2,10 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Verifikasi viewport untuk mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, user-scalable=no">
     <title>XyCloud | NextGeneration</title>
-    
     <!-- 1. Tailwind (dimuat sebagai script) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -16,8 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     
     <!-- 
-      PERBAIKAN v21: style.css sekarang ada di sini.
-      Semua CSS kustom ada di dalam tag <style> ini.
+      PERBAIKAN v22: CSS LENGKAP digabungkan di sini.
     -->
     <style>
         /* Import Font */
@@ -53,7 +50,7 @@
         .login-logo span { color: var(--brand-color); }
         .subscribe-btn {
             background: transparent; border: 2px solid var(--brand-color);
-            color: var(--brand-color); padding: 0.5rem 1rem; border-radius: 0.5rem;
+            color: var(--brand-color); padding: 0.5rem 1rem; border-radius: 9999px; /* Bulat */
             font-weight: 600; transition: all 0.3s ease;
         }
         .subscribe-btn:hover {
@@ -87,7 +84,6 @@
         }
         .login-btn:hover { background-color: var(--brand-color-dark); box-shadow: 0 0 25px var(--brand-color-hover); }
         
-        /* PERUBAHAN v21: Tombol Bantuan Outline */
         .help-btn-outline {
             background-color: transparent;
             border: 1px solid #444; /* Garis outline */
@@ -99,7 +95,6 @@
             margin-top: 1.5rem; /* mt-6 */
             transition: all 0.2s ease;
         }
-        /* Tidak ada hover background, hanya border/text */
         .help-btn-outline:hover {
             border-color: #777;
             color: #ccc;
@@ -200,7 +195,7 @@
 
         /* Modal */
         .modal { transition: opacity 0.2s ease, transform 0.2s ease; z-index: 50; }
-        .modal-content { background-color: #111; border: 1px solid #333; }
+        .modal-content { background-color: #111; border: 1px solid #333; border-radius: 1rem; }
         .modal-close-btn { position: absolute; top: 1rem; right: 1rem; color: #6B7280; transition: color 0.2s ease; }
         .modal-close-btn:hover { color: #fff; }
         
@@ -210,9 +205,27 @@
         .tab-btn.active { color: var(--brand-color); border-bottom-color: var(--brand-color); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .choice-btn { background: #222; border: 1px solid #444; color: #ccc; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease; }
-        .choice-btn:hover { background: #333; color: #fff; }
-        .choice-btn.active { background: var(--brand-color); color: white; border-color: var(--brand-color); }
+        
+        /* PERUBAHAN v22: Tombol Pilihan dibuat UNGU dan BULAT */
+        .choice-btn { 
+            background-color: var(--brand-color);
+            border: 1px solid var(--brand-color-dark); 
+            color: white; 
+            padding: 0.5rem 1rem; 
+            border-radius: 9999px; /* Bulat Penuh */
+            transition: all 0.2s ease;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+        .choice-btn:hover { 
+            background-color: var(--brand-color-dark); 
+            opacity: 1;
+        }
+        .choice-btn.active { 
+            opacity: 1;
+            border-color: white; 
+            box-shadow: 0 0 10px var(--brand-color-hover);
+        }
         .choice-btn.premium { color: #facc15; }
         .premium-icon { color: #facc15; margin-left: 0.5rem; font-size: 0.75rem; }
         .premium-label-wrapper { display: flex; align-items: center; justify-content: space-between; }
@@ -220,7 +233,7 @@
         /* Modal Premium */
         .premium-card {
             background: #1a1a1a;
-            border-radius: 0.75rem;
+            border-radius: 1rem; /* Dibuat bulat */
             padding: 1.5rem;
             border: 1px solid #333;
             transition: all 0.3s ease;
@@ -232,6 +245,7 @@
         .premium-feature-list { list-style-type: none; padding: 0; margin-top: 1.5rem; space-y: 0.75rem; }
         .premium-feature-list li { display: flex; align-items: center; font-size: 1rem; color: #d1d5db; }
         .premium-feature-list .fa-check-circle { color: var(--brand-color); margin-right: 0.75rem; }
+        .premium-card button { border-radius: 9999px; } /* Tombol upgrade bulat */
 
         /* Keyboard BINDING (Popup) */
         #binding-keyboard-modal { 
@@ -239,22 +253,21 @@
             background-color: rgba(17, 24, 39, 0.95); 
         }
         
-        /* Keyboard SLIDING (Transparan) */
+        /* PERUBAHAN v22: Keyboard SLIDING (Full Transparan) */
         #sliding-keyboard {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            /* 90% Transparan */
-            background-color: rgba(17, 24, 39, 0.90); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background-color: transparent; /* Full Transparan */
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             transform: translateY(100%); 
             transition: transform 0.3s ease-in-out;
             z-index: 40;
             padding: 0.5rem;
             padding-bottom: 1.5rem;
-            border-top: 1px solid #444;
+            border-top: none; /* Border dihapus */
         }
         #sliding-keyboard.show {
             transform: translateY(0);
@@ -281,15 +294,18 @@
         .kbd-layer { display: none; }
         .kbd-layer.active { display: block; }
         
-        /* PERUBAHAN v21: Split Keyboard */
-        .kbd-left-half, .kbd-right-half {
-            width: 48%; /* Sedikit gap di tengah */
-        }
-        /* Mengatur flex di parent */
+        /* PERUBAHAN v22: Split Keyboard Mentok */
         #sliding-keyboard-layers {
             display: flex;
             justify-content: space-between;
+            width: 100%; /* Full width */
         }
+        .kbd-left-half, .kbd-right-half {
+            width: 50%; /* 50% width */
+        }
+        .kbd-left-half { padding-right: 0.125rem; } /* 2px gap */
+        .kbd-right-half { padding-left: 0.125rem; } /* 2px gap */
+
 
         /* Kunci Keyboard */
         .kbd-key {
@@ -301,7 +317,6 @@
             min-width: 32px; text-align: center; flex-grow: 1; flex-basis: 0;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Responsif (ZERO DELAY) */
         .kbd-key:active { 
             background-color: #374151; 
         }
@@ -315,11 +330,14 @@
         input:checked + .slider { background-color: var(--brand-color); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* Form Input */
-        .form-input { background: #222; border: 1px solid #444; color: #fff; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; }
+        /* PERUBAHAN v22: Form Input di Modal dibuat Bulat */
+        .form-input { 
+            background: #222; border: 1px solid #444; color: #fff; 
+            width: 100%; padding: 0.75rem 1rem; border-radius: 9999px; /* Bulat */
+        }
         .form-label { display: block; text-sm font-medium text-gray-300 mb-2; }
     
-        /* PERBAIKAN v20/21: Style untuk spinner agar tidak merusak layout */
+        /* PERBAIKAN v22: Style untuk spinner agar tidak merusak layout */
         #loading-spinner svg {
             width: 1.25rem; /* w-5 */
             height: 1.25rem; /* h-5 */
@@ -342,6 +360,7 @@
         <div class="login-content">
             <div class="login-card">
                 <div class="text-center mb-8">
+                    <!-- Logo ada di sini -->
                     <img src="https://i.ibb.co/tpXj7XBj/Proyek-Baru-78-AF0-BCF8.png" 
                          alt="Logo XyCloud" 
                          class="w-24 h-24 mx-auto mb-4">
@@ -350,14 +369,14 @@
                 </div>
                 <form id="login-form">
                     <div class="mb-5">
-                        <label for="client-id" class="form-label">Partner ID</label>
-                        <input type="text" id="client-id" value="GAMING-PC-01" class="login-input rounded-full" required>
+                        <label for="client-id" class="form-label ml-4">Partner ID</label>
+                        <input type="text" id="client-id" value="GAMING-PC-01" class="login-input" required>
                     </div>
                     <div class="mb-6">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" value="••••••••" class="login-input rounded-full" required>
+                        <label for="password" class="form-label ml-4">Password</label>
+                        <input type="password" id="password" value="••••••••" class="login-input" required>
                     </div>
-                    <button type="submit" id="connect-btn" class="login-btn rounded-full">
+                    <button type="submit" id="connect-btn" class="login-btn">
                         Connect
                     </button>
                     <div id="loading-spinner" class="hidden text-center mt-4">
@@ -365,7 +384,6 @@
                         <span class="ml-2 align-middle">Authenticating...</span>
                     </div>
 
-                    <!-- PERUBAHAN v21: Tombol Bantuan Outline BARU -->
                     <button type="button" id="help-btn" class="help-btn-outline">
                         Butuh Bantuan? (Tutorial Koneksi)
                     </button>
@@ -419,11 +437,12 @@
             </div>
         </div>
 
-        <button id="settings-btn" class="absolute top-4 right-4 z-40 bg-black/60 backdrop-blur-md p-3 rounded-full text-white hover:bg-indigo-600 transition-colors w-12 h-12 flex items-center justify-center">
+        <!-- PERUBAHAN v22: Tombol UI Global dibuat UNGU -->
+        <button id="settings-btn" class="absolute top-4 right-4 z-40 bg-indigo-600 hover:bg-indigo-700 p-3 rounded-full text-white transition-colors w-12 h-12 flex items-center justify-center">
             <i class="fas fa-cog fa-lg"></i>
         </button>
         
-        <button id="global-keyboard-btn" class="absolute bottom-4 right-4 z-40 bg-black/60 backdrop-blur-md p-3 rounded-full text-white hover:bg-indigo-600 transition-colors w-14 h-14 flex items-center justify-center">
+        <button id="global-keyboard-btn" class="absolute bottom-4 right-4 z-40 bg-indigo-600 hover:bg-indigo-700 p-3 rounded-full text-white transition-colors w-14 h-14 flex items-center justify-center">
             <i class="fas fa-keyboard fa-lg"></i>
         </button>
         
@@ -450,7 +469,7 @@
                     <!-- Tab Performance -->
                     <div id="tab-performance" class="tab-content active">
                         <div class="mb-4">
-                            <label class="form-label">Resolusi Stream</label>
+                            <label class="form-label ml-4">Resolusi Stream</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-res="720p">720p</button>
                                 <button class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
@@ -458,7 +477,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Profil Performa</label>
+                            <label class="form-label ml-4">Profil Performa</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-profile="latency">Low Latency</button>
                                 <button class="choice-btn" data-profile="balanced">Balanced</button>
@@ -466,7 +485,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Mode Jaringan (Advanced)</label>
+                            <label class="form-label ml-4">Mode Jaringan (Advanced)</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-net="webrtc">Otomatis (WebRTC)</button>
                                 <button class="choice-btn" data-net="tcp">TCP Relay (VPN/Firewall)</button>
@@ -477,10 +496,10 @@
                     
                     <!-- Tab Controls -->
                     <div id="tab-controls" class="tab-content">
-                        <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
+                        <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-full font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
                         
                         <div class="mt-4">
-                            <label class="form-label">Mode Mouse (Layar Sentuh)</label>
+                            <label class="form-label ml-4">Mode Mouse (Layar Sentuh)</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-mouse-mode="direct">Direct (Sentuh = Klik)</button>
                                 <button class="choice-btn" data-mouse-mode="trackpad">Trackpad (Geser Kursor)</button>
@@ -488,11 +507,11 @@
                         </div>
                         
                         <div class="mt-4">
-                            <label class="form-label">Sensitivitas Mouse (Remote)</label>
+                            <label class="form-label ml-4">Sensitivitas Mouse (Remote)</label>
                             <input type="range" min="10" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div class="mt-4">
-                            <label class="form-label">Zona Mati (Deadzone) Joystick</label>
+                            <label class="form-label ml-4">Zona Mati (Deadzone) Joystick</label>
                             <input type="range" min="0" max="50" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div class="flex items-center justify-between mt-4"><label class="text-sm">Getar (Haptic Feedback)</label><label class="switch"><input type="checkbox" id="toggle-haptics-btn"><span class="slider"></span></label></div>
@@ -506,11 +525,11 @@
                     <!-- Tab Layouts -->
                     <div id="tab-layouts" class="tab-content">
                         <div class="mb-4">
-                            <label class="form-label">Transparansi Tombol: <span id="opacity-value">50</span>%</label>
+                            <label class="form-label ml-4">Transparansi Tombol: <span id="opacity-value">50</span>%</label>
                             <input type="range" min="20" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="button-opacity-slider">
                         </div>
                         <div class="mb-4">
-                            <label for="save-layout-input" class="form-label">Simpan Layout Saat Ini</label>
+                            <label for="save-layout-input" class="form-label ml-4">Simpan Layout Saat Ini</label>
                             <div class="flex gap-2">
                                 <input type="text" id="save-layout-input" placeholder="cth: Layout FiveM" class="form-input flex-grow">
                                 <button id="save-layout-btn" class="choice-btn active"><i class="fas fa-save mr-2"></i>Lokal</button>
@@ -518,13 +537,13 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Layout Tersimpan</label>
+                            <label class="form-label ml-4">Layout Tersimpan</label>
                             <div id="saved-layouts-list" class="space-y-2 max-h-32 overflow-y-auto">
                                 <p class="text-gray-400 text-sm">Belum ada layout yang disimpan.</p>
                             </div>
                         </div>
                         <div>
-                            <label for="load-layout-input" class="form-label">Muat dari Kode Share</label>
+                            <label for="load-layout-input" class="form-label ml-4">Muat dari Kode Share</label>
                             <div class="flex gap-2">
                                 <input type="text" id="load-layout-input" placeholder="Masukkan kode..." class="form-input flex-grow">
                                 <button id="load-layout-btn" class="choice-btn"><i class="fas fa-download mr-2"></i>Muat</button>
@@ -534,21 +553,21 @@
                     
                     <div id="tab-stream" class="tab-content">
                         <div class="mb-4">
-                            <label class="form-label">Sumber Audio</label>
+                            <label class="form-label ml-4">Sumber Audio</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-audio="pc">PC Saja</button>
                                 <button class="choice-btn" data-audio="pc_mic">PC + Mic (Client)</button>
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Output Audio (Premium)</label>
+                            <label class="form-label ml-4">Output Audio (Premium)</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-audio-out="merged">Gabung</button>
                                 <button class="choice-btn premium" data-audio-out="separate" data-premium-feature="true">Pisah (Game/Chat) <i class="premium-icon fas fa-crown"></i></button>
                             </div>
                         </div>
                         <div>
-                            <label class="form-label">Volume Mic</label>
+                            <label class="form-label ml-4">Volume Mic</label>
                             <input type="range" min="0" max="100" value="80" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                         </div>
                         
@@ -560,7 +579,7 @@
                             <button id="monitor-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-desktop mr-2"></i> Ganti Monitor <i class="premium-icon fas fa-crown"></i></button>
                             <button id="fullscreen-btn" class="choice-btn"><i class="fas fa-expand mr-2"></i> Fullscreen</button>
                         </div>
-                         <button id="disconnect-btn" class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg"><i class="fas fa-power-off fa-fw mr-2"></i> Disconnect</button>
+                         <button id="disconnect-btn" class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-full"><i class="fas fa-power-off fa-fw mr-2"></i> Disconnect</button>
                     </div>
                 </div>
             </div>
@@ -574,7 +593,6 @@
                 <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="\"> \ </span></div>
                 <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.8;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.8;">Enter</span></div>
                 <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span></div>
-                <!-- PERUBAHAN v21: Ikon Windows ditambahkan -->
                 <div class="kbd-row"><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key=" " style="flex-grow: 6;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE" title="Paste Clipboard"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
             </div>
             <button id="close-binding-keyboard-btn" class="mt-4 bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold">Batal</button>
@@ -600,16 +618,16 @@
                 
                 <div class="space-y-4">
                     <div id="edit-key-label-wrapper">
-                        <label for="edit-key-label" class="form-label">Label Tombol</label>
+                        <label for="edit-key-label" class="form-label ml-4">Label Tombol</label>
                         <input type="text" id="edit-key-label" class="form-input">
                     </div>
                     <div id="edit-key-command-wrapper">
-                        <label for="edit-key-command" class="form-label">Perintah (Read-only)</label>
+                        <label for="edit-key-command" class="form-label ml-4">Perintah (Read-only)</label>
                         <input type="text" id="edit-key-command" class="form-input bg-gray-800" readonly>
                     </div>
                     
                     <div id="edit-key-style-wrapper-parent">
-                        <label class="form-label">Bentuk Tombol</label>
+                        <label class="form-label ml-4">Bentuk Tombol</label>
                         <div class="flex gap-2" id="edit-key-style-wrapper">
                             <button class="choice-btn" data-style="circle"><i class="fas fa-circle mr-2"></i> Bulat</button>
                             <button class="choice-btn" data-style="rectangle"><i class="fas fa-square mr-2"></i> Kotak</button>
@@ -617,7 +635,7 @@
                     </div>
                     
                     <div id="edit-key-mode-wrapper-parent">
-                        <label class="form-label">Mode Tombol</label>
+                        <label class="form-label ml-4">Mode Tombol</label>
                         <div class="flex gap-2" id="edit-key-mode-wrapper">
                             <button class="choice-btn" data-mode="press">Tekan</button>
                             <button class="choice-btn" data-mode="toggle">Toggle</button>
@@ -626,16 +644,16 @@
                     </div>
 
                     <div>
-                        <label class="form-label">Ukuran Tombol: <span id="edit-key-size-value">100</span>%</label>
+                        <label class="form-label ml-4">Ukuran Tombol: <span id="edit-key-size-value">100</span>%</label>
                         <input type="range" id="edit-key-size" min="50" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                     </div>
                 </div>
 
                 <div class="flex gap-4 mt-6">
-                    <button id="delete-key-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
+                    <button id="delete-key-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
                         <i class="fas fa-trash mr-2"></i> Hapus
                     </button>
-                    <button id="save-edit-key-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
+                    <button id="save-edit-key-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">
                         <i class="fas fa-save mr-2"></i> Simpan
                     </button>
                 </div>
@@ -645,7 +663,8 @@
         <!-- Keyboard SLIDING (Split) -->
         <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
             <button id="close-sliding-keyboard-btn"><i class="fas fa-times"></i></button>
-            <div id="sliding-keyboard-layers" class="w-full max-w-5xl mx-auto flex justify-between">
+            <!-- PERUBAHAN v22: div parent dihapus agar mentok -->
+            <div id="sliding-keyboard-layers" class="w-full flex justify-between">
                 
                 <!-- === KIRI === -->
                 <div class="kbd-left-half">
@@ -655,7 +674,6 @@
                         <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span></div>
                         <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.5;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span></div>
                         <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span></div>
-                        <!-- PERUBAHAN v21: Ikon Windows ditambahkan -->
                         <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span></div>
                     </div>
                     <!-- Layer Simbol 1 (Kiri) -->
@@ -705,7 +723,52 @@
     
     <!-- Modal Premium (GLOBAL) -->
     <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-        <!-- ... Konten Modal Premium Elegan ... -->
+        <div class="modal-content w-full max-w-4xl p-0 rounded-lg shadow-2xl relative bg-gray-900 border border-gray-700 overflow-hidden">
+            <button id="close-premium-modal" class="modal-close-btn z-10"><i class="fas fa-times fa-lg"></i></button>
+            
+            <div class="p-8 text-center">
+                <i class="fas fa-crown text-4xl text-yellow-400 mb-4"></i>
+                <h2 class="text-3xl font-extrabold text-white mb-2">XyCloud Premium</h2>
+                <p class="text-gray-400 text-lg">Buka potensi penuh rig Anda.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 pt-0">
+                <!-- Pro Tier -->
+                <div class="premium-card">
+                    <h3 class="text-2xl font-bold text-white">Pro</h3>
+                    <p class="text-gray-400 mb-4">Ideal untuk gamer serius.</p>
+                    <ul class="premium-feature-list">
+                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 1080p</li>
+                        <li><i class="fas fa-check-circle"></i> 60 FPS Stream</li>
+                        <li><i class="fas fa-check-circle"></i> Kualitas Audio High-Fidelity</li>
+                        <li><i class="fas fa-check-circle"></i> Dukungan Gyro Aiming</li>
+                        <li><i class="fas fa-check-circle"></i> Simpan Layout di Cloud (3 Slot)</li>
+                    </ul>
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-full text-md mt-6">
+                        Upgrade ke Pro
+                    </button>
+                </div>
+                
+                <!-- Ultimate Tier (Paling Populer) -->
+                <div class="premium-card premium-card-popular relative">
+                    <div class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">PALING POPULER</div>
+                    <h3 class="text-2xl font-bold text-white">Ultimate</h3>
+                    <p class="text-gray-400 mb-4">Untuk pengalaman tanpa kompromi.</p>
+                    <ul class="premium-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span class="font-bold">Semua fitur Pro</span></li>
+                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 4K (HDR)</li>
+                        <li><i class="fas fa-check-circle"></i> 120 FPS Stream</li>
+                        <li><i class="fas fa-check-circle"></i> Audio Surround 5.1</li>
+                        <li><i class="fas fa-check-circle"></i> Perekaman Sesi Cloud</li>
+                        <li><i class="fas fa-check-circle"></i> Dukungan Multi-Monitor</li>
+                        <li><i class="fas fa-check-circle"></i> Cloud Layout (Unlimited)</li>
+                    </ul>
+                    <button class="w-full text-white font-bold py-3 px-4 rounded-full text-md mt-6" style="background: var(--brand-gradient);">
+                        Dapatkan Ultimate
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Notifikasi Toast (GLOBAL) -->
@@ -714,8 +777,7 @@
     </div>
 
     <!--
-      PERBAIKAN v21: script.js sekarang ada di sini.
-      Semua kode JavaScript ada di dalam tag <script> ini.
+      PERBAIKAN v22: JavaScript LENGKAP ada di sini.
     -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -757,7 +819,6 @@
             const closeAddJoystickModal = document.getElementById('close-add-joystick-modal');
             const joystickStick = document.querySelector('.joystick-stick');
             
-            // Keyboard v19/21
             const globalKeyboardBtn = document.getElementById('global-keyboard-btn');
             const slidingKeyboard = document.getElementById('sliding-keyboard');
             const closeSlidingKeyboardBtn = document.getElementById('close-sliding-keyboard-btn');
@@ -765,7 +826,6 @@
             const bindingKeyboardModal = document.getElementById('binding-keyboard-modal');
             const closeBindingKeyboardBtn = document.getElementById('close-binding-keyboard-btn');
 
-            // Elemen Edit Modal
             const editKeyModal = document.getElementById('edit-key-modal');
             const closeEditKeyModal = document.getElementById('close-edit-key-modal');
             const editKeyLabel = document.getElementById('edit-key-label');
@@ -781,7 +841,6 @@
             const editKeyStyleWrapperParent = document.getElementById('edit-key-style-wrapper-parent');
             const editKeyModeWrapperParent = document.getElementById('edit-key-mode-wrapper-parent');
 
-            // Elemen Fitur Baru
             const buttonOpacitySlider = document.getElementById('button-opacity-slider');
             const opacityValue = document.getElementById('opacity-value');
             const toggleHapticsBtn = document.getElementById('toggle-haptics-btn');
@@ -791,7 +850,6 @@
             const loadLayoutInput = document.getElementById('load-layout-input');
             const loadLayoutBtn = document.getElementById('load-layout-btn');
             
-            // PERUBAHAN v21: Tombol Bantuan
             const helpBtn = document.getElementById('help-btn');
 
             // --- 1. Fungsi Notifikasi ---
@@ -902,6 +960,9 @@
                     if (command === 'SPECIAL_PASTE') {
                         textSpan.innerHTML = `<i class="fas fa-paste"></i>`;
                         newEl.dataset.label = "Paste";
+                    } else if (command === 'Meta') {
+                        textSpan.innerHTML = `<i class="fab fa-windows"></i>`;
+                        newEl.dataset.label = "Win";
                     } else {
                         textSpan.innerHTML = label;
                     }
@@ -1109,13 +1170,13 @@
                     });
                 }
                 
-                const isSpecialButton = style === 'analog' || style === 'dpad' || command === 'SPECIAL_PASTE';
+                const isSpecialButton = style === 'analog' || style === 'dpad' || command === 'SPECIAL_PASTE' || command === 'Meta';
                 if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'block';
                 if (editKeyCommandWrapper) editKeyCommandWrapper.style.display = isSpecialButton ? 'none' : 'block';
                 if (editKeyStyleWrapperParent) editKeyStyleWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
                 if (editKeyModeWrapperParent) editKeyModeWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
                 
-                if(command === 'SPECIAL_PASTE') {
+                if(command === 'SPECIAL_PASTE' || command === 'Meta') {
                     if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'none';
                 }
 
@@ -1140,7 +1201,7 @@
                     
                     const labelEl = currentEditingElement.querySelector('.btn-label');
                     if (labelEl) {
-                        if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE') {
+                        if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE' && currentEditingElement.dataset.command !== 'Meta') {
                              labelEl.textContent = newLabel;
                         }
                     }
@@ -1200,7 +1261,7 @@
                 });
             }
             
-            // --- Logika Keyboard v21 (Split/Layer) ---
+            // --- Logika Keyboard v22 ---
             
             // 1. Keyboard BINDING (Popup)
             if (addKeyBtn) {
@@ -1218,7 +1279,13 @@
                     key.addEventListener('click', () => {
                         const keyVal = key.dataset.key;
                         if (!keyVal) return;
-                        const label = (keyVal === 'SPECIAL_PASTE') ? 'Paste' : (keyVal.length > 1 ? keyVal : keyVal.toUpperCase());
+                        
+                        let label = keyVal;
+                        if(keyVal === 'SPECIAL_PASTE') label = 'Paste';
+                        else if(keyVal === 'Meta') label = 'Win';
+                        else if(keyVal.length > 1) label = keyVal;
+                        else label = keyVal.toUpperCase();
+
                         addNewDraggable('key', label, keyVal);
                         closeModal(bindingKeyboardModal);
                         showToast(`Tombol "${label}" ditambahkan! Klik untuk edit.`);
@@ -1239,18 +1306,23 @@
                 });
             }
 
-            // Fungsi untuk mengganti layer keyboard
             function switchKeyboardLayer(layerId) {
                 if (!slidingKeyboardLayers) return;
                 
                 slidingKeyboardLayers.querySelectorAll('.kbd-layer').forEach(layer => {
-                    layer.classList.remove('active', 'hidden'); // Reset
-                    if (layer.id.startsWith(layerId)) {
-                        layer.classList.add('active');
-                    } else {
-                        layer.classList.add('hidden');
-                    }
+                    layer.classList.remove('active');
+                    layer.classList.add('hidden'); 
                 });
+                
+                const newLayerLeft = document.getElementById(`${layerId}-left`);
+                const newLayerRight = document.getElementById(`${layerId}-right`);
+
+                if (newLayerLeft && newLayerRight) {
+                    newLayerLeft.classList.remove('hidden');
+                    newLayerLeft.classList.add('active');
+                    newLayerRight.classList.remove('hidden');
+                    newLayerRight.classList.add('active');
+                }
             }
 
             if (slidingKeyboard) {
@@ -1277,7 +1349,6 @@
                             handlePasteCommand();
                         } else {
                             showToast(`Mengirim tombol: ${keyVal}`);
-                            // Di aplikasi nyata: kirim data { type: 'key_press', key: keyVal }
                         }
                     });
                 });
@@ -1322,7 +1393,6 @@
                             }
                             console.log(`Mengirim Clipboard: ${text.substring(0, 20)}...`);
                             showToast('Clipboard dikirim ke PC! (Simulasi)');
-                            // Di aplikasi nyata: rtcConnection.send(JSON.stringify({ type: 'paste', content: text }));
                         })
                         .catch(err => {
                             showToast('Gagal membaca clipboard. Izin ditolak?', true);
@@ -1350,20 +1420,16 @@
                         handlePasteCommand();
                         return;
                     }
-
                     if (mode === 'toggle') {
                         // dihandle di pointerup
                     } else if (mode === 'turbo') {
                         console.log(`[PointerDown-Turbo] Mengirim: ${command}`);
-                        // rtcConnection.send(JSON.stringify({ type: 'key_down', key: command }));
                         if (pressTimer) clearInterval(pressTimer);
                         pressTimer = setInterval(() => {
                             console.log(`[Turbo] Mengirim: ${command}`);
-                            // rtcConnection.send(JSON.stringify({ type: 'key_down', key: command }));
                         }, 100);
                     } else {
                         console.log(`[PointerDown] Mengirim: ${command}`);
-                        // rtcConnection.send(JSON.stringify({ type: 'key_down', key: command }));
                     }
                 });
                 
@@ -1378,10 +1444,8 @@
                     
                     if (mode === 'toggle') {
                         console.log(`[PointerUp - Toggle] Mengirim: ${command}`);
-                        // rtcConnection.send(JSON.stringify({ type: 'key_toggle', key: command }));
                     } else {
                         console.log(`[PointerUp] Mengirim: ${command}`);
-                        // rtcConnection.send(JSON.stringify({ type: 'key_up', key: command }));
                     }
                 };
                 
@@ -1447,13 +1511,13 @@
                 savedLayoutsList.innerHTML = '';
                 savedLayouts.forEach(layout => {
                     const div = document.createElement('div');
-                    div.className = 'flex items-center justify-between p-3 bg-gray-700 rounded-lg';
+                    div.className = 'flex items-center justify-between p-3 bg-gray-700 rounded-full'; // Dibuat bulat
                     div.innerHTML = `
-                        <span class="font-semibold">${layout.name}</span>
+                        <span class="font-semibold ml-2">${layout.name}</span>
                         <div class="flex gap-2">
-                            <button class="text-sm text-green-400" data-load-id="${layout.id}">Muat</button>
-                            <button class="text-sm text-blue-400" data-share-id="${layout.id}">Share</button>
-                            <button class="text-sm text-red-400" data-delete-id="${layout.id}">Hapus</button>
+                            <button class="text-sm text-green-400 font-bold" data-load-id="${layout.id}">Muat</button>
+                            <button class="text-sm text-blue-400 font-bold" data-share-id="${layout.id}">Share</button>
+                            <button class="text-sm text-red-400 font-bold mr-2" data-delete-id="${layout.id}">Hapus</button>
                         </div>
                     `;
                     savedLayoutsList.appendChild(div);
