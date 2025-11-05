@@ -5,24 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, user-scalable=no">
     <title>XyCloud | NextGeneration</title>
     
+    <!-- 1. Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- 2. Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- 3. Interact.js -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     
+    <!-- 
+      4. Firebase SDK (PENTING)
+    -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
       
       // --- PASTE KONFIGURASI FIREBASE-MU DI SINI ---
       const firebaseConfig = {
-          apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
-          authDomain: "kall-e4441.firebaseapp.com",
-          projectId: "kall-e4441",
-          storageBucket: "kall-e4441.firebasestorage.app",
-          messagingSenderId: "232976172726",
-          appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",MU"
+        apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
+        authDomain: "kall-e4441.firebaseapp.com",
+        projectId: "kall-e4441",
+        storageBucket: "kall-e4441.firebasestorage.app",
+        messagingSenderId: "232976172726",
+        appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",
+        measurementId: "G-YQBDKK616N"
       };
       
       // Inisialisasi Firebase
@@ -36,13 +43,16 @@
         window.setDocCommand = setDoc;
         window.serverTimestampCommand = serverTimestamp;
         
-        console.log("Firebase v26 Client Loaded.");
+        console.log("Firebase v31 Client Loaded.");
       } catch (e) {
-        console.error("Firebase GAGAL di-load. Cek 'firebaseConfig' di atas.", e);
+        console.error("Firebase GAGAL di-load.", e);
         alert("Error Konfigurasi Firebase! Cek konsol (F12).");
       }
     </script>
     
+    <!-- 
+      5. CSS Internal Lengkap
+    -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         :root {
@@ -140,6 +150,7 @@
 </head>
 <body class="bg-black text-white overflow-hidden h-screen">
 
+    <!-- 1. Halaman Login -->
     <div id="login-page" class="min-h-screen flex flex-col">
         <header id="login-header">
             <div class="login-logo">Xy<span>Cloud</span></div>
@@ -158,7 +169,7 @@
                     <h2 class="text-3xl font-extrabold text-white mt-4">Selamat Datang</h2>
                     <p class="text-gray-400">Hubungkan ke rig Anda dari mana saja.</p>
                 </div>
-                <div id="login-form">
+                <div id="login-form-container">
                     <div class="mb-5">
                         <label for="client-id" class="form-label sr-only">Partner ID</label>
                         <input type="text" id="client-id" value="PC-KALL" class="login-input rounded-full" placeholder="Partner ID" required>
@@ -191,10 +202,14 @@
         </div>
     </div>
 
+    <!-- 2. Halaman Remote Control -->
     <div id="remote-page" class="hidden h-screen flex flex-col relative">
+        <!-- Konten Layar Remote -->
         <div class="flex-grow bg-black flex items-center justify-center p-0 overflow-auto relative h-full">
             <div id="remote-content" class="w-full h-full aspect-video bg-gray-700 relative overflow-hidden">
-                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" class="w-full h-full object-cover" alt="Simulasi stream Windows 11">
+                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" 
+                     class="w-full h-full object-cover" 
+                     alt="Simulasi stream Windows 11">
                 
                 <div id="stats-overlay" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm p-2 rounded-lg font-mono text-sm text-green-400">
                     <div>Ping: <span class="font-bold">15ms</span></div>
@@ -238,358 +253,674 @@
             <button id="exit-customize-btn" class="customize-btn exit-btn"><i class="fas fa-check mr-2"></i> Simpan & Keluar</button>
         </div>
         
+        <!-- Modal Pengaturan -->
         <div id="settings-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            </div>
+            <div class="modal-content w-full max-w-2xl p-6 rounded-lg shadow-2xl relative overflow-y-auto max-h-screen">
+                <button id="close-settings-modal" class="modal-close-btn"><i class="fas fa-times fa-lg"></i></button>
+                <h2 class="text-2xl font-bold mb-6">Pengaturan</h2>
+                
+                <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
+                    <button class="tab-btn active" data-tab="performance">Performance</button>
+                    <button class="tab-btn" data-tab="controls">Controls</button>
+                    <button class="tab-btn" data-tab="layouts">Layouts</button>
+                    <button class="tab-btn" data-tab="stream">Stream</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Tab Performance -->
+                    <div id="tab-performance" class="tab-content active">
+                        <div class="mb-4">
+                            <label class="form-label">Resolusi Stream</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-res="720p">720p</button>
+                                <button class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
+                                <button class="choice-btn" data-res="480p">480p</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Profil Performa</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-profile="latency">Low Latency</button>
+                                <button class="choice-btn" data-profile="balanced">Balanced</button>
+                                <button class="choice-btn" data-profile="quality">High Quality</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Mode Jaringan (Advanced)</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-net="webrtc">Otomatis (WebRTC)</button>
+                                <button class="choice-btn" data-net="tcp">TCP Relay (VPN/Firewall)</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between"><label class="text-sm">Tampilkan Stats (Ping/FPS)</label><label class="switch"><input type="checkbox" id="toggle-stats-btn" checked><span class="slider"></span></label></div>
+                    </div>
+                    
+                    <!-- Tab Controls -->
+                    <div id="tab-controls" class="tab-content">
+                        <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
+                        
+                        <div class="mt-4">
+                            <label class="form-label">Mode Mouse (Layar Sentuh)</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-mouse-mode="direct">Direct (Sentuh = Klik)</button>
+                                <button class="choice-btn" data-mouse-mode="trackpad">Trackpad (Geser Kursor)</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="form-label">Sensitivitas Mouse (Remote)</label>
+                            <input type="range" min="10" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div class="mt-4">
+                            <label class="form-label">Zona Mati (Deadzone) Joystick</label>
+                            <input type="range" min="0" max="50" value="10" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div class="flex items-center justify-between mt-4"><label class="text-sm">Getar (Haptic Feedback)</label><label class="switch"><input type="checkbox" id="toggle-haptics-btn"><span class="slider"></span></label></div>
+                        <div class="flex items-center justify-between mt-4 premium-label-wrapper">
+                            <label class="text-sm">Gyro Aiming <i class="premium-icon fas fa-crown"></i></label>
+                            <label class="switch" data-premium-feature="true"><input type="checkbox" id="toggle-gyro-btn"><span class="slider"></span></label>
+                        </div>
+                        <div class="flex items-center justify-between mt-4"><label class="text-sm">Gamepad Fisik Passthrough</label><label class="switch"><input type="checkbox" id="toggle-gamepad-btn" checked><span class="slider"></span></label></div>
+                    </div>
 
-        <div id="binding-keyboard-modal" class="hidden modal fixed inset-0 p-4 z-55 flex flex-col items-center justify-center opacity-0 overflow-auto">
+                    <!-- Tab Layouts -->
+                    <div id="tab-layouts" class="tab-content">
+                        <div class="mb-4">
+                            <label class="form-label">Transparansi Tombol: <span id="opacity-value">50</span>%</label>
+                            <input type="range" min="20" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" id="button-opacity-slider">
+                        </div>
+                        <div class="mb-4">
+                            <label for="save-layout-input" class="form-label">Simpan Layout Saat Ini</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="save-layout-input" placeholder="cth: Layout FiveM" class="form-input flex-grow">
+                                <button id="save-layout-btn" class="choice-btn active"><i class="fas fa-save mr-2"></i>Lokal</button>
+                                <button id="save-cloud-btn" class="choice-btn premium" data-premium-feature="true"><i class="fas fa-cloud-upload-alt mr-2"></i>Cloud <i class="premium-icon fas fa-crown"></i></button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Layout Tersimpan</label>
+                            <div id="saved-layouts-list" class="space-y-2 max-h-32 overflow-y-auto">
+                                <p class="text-gray-400 text-sm">Belum ada layout yang disimpan.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="load-layout-input" class="form-label">Muat dari Kode Share</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="load-layout-input" placeholder="Masukkan kode..." class="form-input flex-grow">
+                                <button id="load-layout-btn" class="choice-btn"><i class="fas fa-download mr-2"></i>Muat</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tab-stream" class="tab-content">
+                        <div class="mb-4">
+                            <label class="form-label">Sumber Audio</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-audio="pc">PC Saja</button>
+                                <button class="choice-btn" data-audio="pc_mic">PC + Mic (Client)</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Output Audio (Premium)</label>
+                            <div class="flex gap-2">
+                                <button class="choice-btn active" data-audio-out="merged">Gabung</button>
+                                <button class="choice-btn premium" data-audio-out="separate" data-premium-feature="true">Pisah (Game/Chat) <i class="premium-icon fas fa-crown"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Volume Mic</label>
+                            <input type="range" min="0" max="100" value="80" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        
+                        <div class="border-t border-gray-700 my-6"></div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="screenshot-btn" class="choice-btn"><i class="fas fa-camera mr-2"></i> Ambil Screenshot</button>
+                            <button id="record-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-video mr-2"></i> Mulai Merekam <i class="premium-icon fas fa-crown"></i></button>
+                            <button id="monitor-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-desktop mr-2"></i> Ganti Monitor <i class="premium-icon fas fa-crown"></i></button>
+                            <button id="fullscreen-btn" class="choice-btn"><i class="fas fa-expand mr-2"></i> Fullscreen</button>
+                        </div>
+                         <button id="disconnect-btn" class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg"><i class="fas fa-power-off fa-fw mr-2"></i> Disconnect</button>
+                    </div>
+                </div>
             </div>
-        
-        <div id="add-joystick-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            </div>
-
-        <div id="edit-key-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
-            </div>
-
-        <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
-            </div>
-
-    </div> <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
         </div>
 
+        <!-- Keyboard BINDING (Popup) -->
+        <div id="binding-keyboard-modal" class="hidden modal fixed inset-0 p-4 z-55 flex flex-col items-center justify-center opacity-0 overflow-auto">
+            <div class="w-full max-w-5xl p-4 bg-gray-800 rounded-xl border border-gray-700">
+                <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="F1">F1</span><span class="kbd-key" data-key="F2">F2</span><span class="kbd-key" data-key="F3">F3</span><span class="kbd-key" data-key="F4">F4</span><span class="kbd-key" data-key="F5">F5</span><span class="kbd-key" data-key="F6">F6</span><span class="kbd-key" data-key="F7">F7</span><span class="kbd-key" data-key="F8">F8</span><span class="kbd-key" data-key="F9">F9</span><span class="kbd-key" data-key="F10">F10</span><span class="kbd-key" data-key="F11">F11</span><span class="kbd-key" data-key="F12">F12</span></div>
+                <div class="kbd-row"><span class="kbd-key" data-key="`">`</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="-">-</span><span class="kbd-key" data-key="=">=</span><span class="kbd-key" data-key="Backspace" style="flex-grow: 2;">Backspace</span></div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="\"> \ </span></div>
+                <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.8;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.8;">Enter</span></div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span></div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key=" " style="flex-grow: 6;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE" title="Paste Clipboard"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
+            </div>
+            <button id="close-binding-keyboard-btn" class="mt-4 bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold">Batal</button>
+        </div>
+        
+        <!-- Modal Pilihan Kontrol -->
+        <div id="add-joystick-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+            <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
+                <button id="close-add-joystick-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
+                <h3 class="text-2xl font-bold mb-6">Pilih Tipe Kontrol</h3>
+                <div class="flex flex-col gap-4">
+                    <button data-type="analog" class="add-control-sim-btn choice-btn text-lg p-4"><i class="fas fa-compass fa-fw mr-3"></i> Joystick Analog</button>
+                    <button data-type="dpad" class="add-control-sim-btn choice-btn text-lg p-4"><i class="fas fa-th fa-fw mr-3"></i> D-Pad (WASD)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit Tombol -->
+        <div id="edit-key-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+            <div class="modal-content p-6 rounded-lg shadow-2xl w-full max-w-sm relative">
+                <button id="close-edit-key-modal" class="modal-close-btn"><i class="fas fa-times"></i></button>
+                <h3 class="text-2xl font-bold mb-4">Edit Tombol</h3>
+                
+                <div class="space-y-4">
+                    <div id="edit-key-label-wrapper">
+                        <label for="edit-key-label" class="form-label">Label Tombol</label>
+                        <input type="text" id="edit-key-label" class="form-input">
+                    </div>
+                    <div id="edit-key-command-wrapper">
+                        <label for="edit-key-command" class="form-label">Perintah (Read-only)</label>
+                        <input type="text" id="edit-key-command" class="form-input bg-gray-800" readonly>
+                    </div>
+                    
+                    <div id="edit-key-style-wrapper-parent">
+                        <label class="form-label">Bentuk Tombol</label>
+                        <div class="flex gap-2" id="edit-key-style-wrapper">
+                            <button class="choice-btn" data-style="circle"><i class="fas fa-circle mr-2"></i> Bulat</button>
+                            <button class="choice-btn" data-style="rectangle"><i class="fas fa-square mr-2"></i> Kotak</button>
+                        </div>
+                    </div>
+                    
+                    <div id="edit-key-mode-wrapper-parent">
+                        <label class="form-label">Mode Tombol</label>
+                        <div class="flex gap-2" id="edit-key-mode-wrapper">
+                            <button class="choice-btn" data-mode="press">Tekan</button>
+                            <button class="choice-btn" data-mode="toggle">Toggle</button>
+                            <button class="choice-btn" data-mode="turbo">Turbo</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Ukuran Tombol: <span id="edit-key-size-value">100</span>%</label>
+                        <input type="range" id="edit-key-size" min="50" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button id="delete-key-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-trash mr-2"></i> Hapus
+                    </button>
+                    <button id="save-edit-key-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-save mr-2"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard SLIDING (Split) -->
+        <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
+            <button id="close-sliding-keyboard-btn"><i class="fas fa-times"></i></button>
+            <div id="sliding-keyboard-layers" class="w-full max-w-5xl mx-auto flex justify-between">
+                
+                <!-- === KIRI === -->
+                <div class="kbd-left-half">
+                    <div id="kbd-layer-main-left" class="kbd-layer active">
+                        <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.5;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta"><i class="fab fa-windows"></i></span><span class="kbd-key" data-key="Alt">Alt</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols1-left" class="kbd-layer hidden">
+                        <div class="kbd-row"><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="@">@</span><span class="kbd-key" data-key="#">#</span><span class="kbd-key" data-key="$">$</span><span class="kbd-key" data-key="%">%</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="#+={" style="flex-grow: 1.5;">#{<</span><span class="kbd-key" data-key="`">`</span><span class="kbd-key" data-key="~">~</span><span class="kbd-key" data-key="&">&</span><span class="kbd-key" data-key="*">*</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="(">(</span><span class="kbd-key" data-key=")">)</span><span class="kbd-key" data-key="-">-</span><span class="kbd-key" data-key="_">_</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols2-left" class="kbd-layer hidden">
+                        <div class="kbd-row"><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="{">{</span><span class="kbd-key" data-key="}">}</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="<"><</span><span class="kbd-key" data-key=">">></span><span class="kbd-key" data-key="\"> \ </span><span class="kbd-key" data-key="|">|</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="€">€</span><span class="kbd-key" data-key="£">£</span><span class="kbd-key" data-key="¥">¥</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="©">©</span><span class="kbd-key" data-key="®">®</span><span class="kbd-key" data-key="™">™</span></div>
+                    </div>
+                </div>
+                <!-- === KANAN === -->
+                <div class="kbd-right-half">
+                    <div id="kbd-layer-main-right" class="kbd-layer active">
+                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
+                    </div>
+                    <div id="kbd-layer-symbols1-right" class="kbd-layer hidden">
+                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="^">^</span><span class="kbd-key" data-key="=">=</span><span class="kbd-key" data-key="+">+</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key=":">:</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?">?</span><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="&quot;">"</span><span class="kbd-key" data-key="'">'</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols2-right" class="kbd-layer hidden">
+                        <div class="kbd-row"><span class="kbd-key" data-key="•"> • </span><span class="kbd-key" data-key="§">§</span><span class="kbd-key" data-key="°">°</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- TUTUP DARI #remote-page -->
+    
+    <!-- Modal Premium (GLOBAL) -->
+    <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+        <div class="modal-content w-full max-w-4xl p-0 rounded-lg shadow-2xl relative bg-gray-900 border border-gray-700 overflow-hidden">
+            <button id="close-premium-modal" class="modal-close-btn z-10"><i class="fas fa-times fa-lg"></i></button>
+            <div class="p-8 text-center">
+                <i class="fas fa-crown text-4xl text-yellow-400 mb-4"></i>
+                <h2 class="text-3xl font-extrabold text-white mb-2">XyCloud Premium</h2>
+                <p class="text-gray-400 text-lg">Buka potensi penuh rig Anda.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 pt-0">
+                <div class="premium-card">
+                    <h3 class="text-2xl font-bold text-white">Pro</h3>
+                    <p class="text-gray-400 mb-4">Ideal untuk gamer serius.</p>
+                    <ul class="premium-feature-list">
+                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 1080p</li>
+                        <li><i class="fas fa-check-circle"></i> 60 FPS Stream</li>
+                        <li><i class="fas fa-check-circle"></i> Kualitas Audio High-Fidelity</li>
+                        <li><i class="fas fa-check-circle"></i> Dukungan Gyro Aiming</li>
+                        <li><i class="fas fa-check-circle"></i> Simpan Layout di Cloud (3 Slot)</li>
+                    </ul>
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg text-md mt-6">
+                        Upgrade ke Pro
+                    </button>
+                </div>
+                <div class="premium-card premium-card-popular relative">
+                    <div class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">PALING POPULER</div>
+                    <h3 class="text-2xl font-bold text-white">Ultimate</h3>
+                    <p class="text-gray-400 mb-4">Untuk pengalaman tanpa kompromi.</p>
+                    <ul class="premium-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span class="font-bold">Semua fitur Pro</span></li>
+                        <li><i class="fas fa-check-circle"></i> Resolusi Stream 4K (HDR)</li>
+                        <li><i class="fas fa-check-circle"></i> 120 FPS Stream</li>
+                        <li><i class="fas fa-check-circle"></i> Audio Surround 5.1</li>
+                        <li><i class="fas fa-check-circle"></i> Perekaman Sesi Cloud</li>
+                        <li><i class="fas fa-check-circle"></i> Dukungan Multi-Monitor</li>
+                        <li><i class="fas fa-check-circle"></i> Cloud Layout (Unlimited)</li>
+                    </ul>
+                    <button class="w-full text-white font-bold py-3 px-4 rounded-lg text-md mt-6" style="background: var(--brand-gradient);">
+                        Dapatkan Ultimate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi Toast (GLOBAL) -->
     <div id="toast-notification" class="bg-indigo-600 text-white py-3 px-5 rounded-lg shadow-lg">
         <span id="toast-message"></span>
     </div>
 
+    <!-- 
+      Logika JavaScript v31 (PERBAIKAN TYPO)
+    -->
     <script type="module">
-        // Import fungsi Firebase dari script di <head>
-        const { getFirestore, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
         
-        // Ambil 'db' yang sudah diinisialisasi dari window
-        const db = window.db;
-        let docRef; // Referensi ke dokumen perintah
+        // --- 1. IMPORT FIREBASE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- 2. KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
+          authDomain: "kall-e4441.firebaseapp.com",
+          projectId: "kall-e4441",
+          storageBucket: "kall-e4441.firebasestorage.app",
+          messagingSenderId: "232976172726",
+          appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",
+          measurementId: "G-YQBDKK616N"
+        };
+        
+        // --- 3. INISIALISASI FIREBASE ---
+        let db, docRef; // Variabel lokal
+        let createDocRef, setDocCommand, serverTimestampCommand; // Fungsi lokal
 
-            // --- State Aplikasi ---
-            let isCustomizing = false;
-            let hapticsEnabled = false;
-            let isPremium = false;
-            let toastTimeout;
-            let savedLayouts = [];
-            let currentEditingElement = null;
+        try {
+          const app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          
+          // Simpan fungsi-fungsi ke variabel lokal
+          createDocRef = (db, collection, id) => doc(db, collection, id);
+          setDocCommand = setDoc;
+          serverTimestampCommand = serverTimestamp;
+          
+          console.log("Firebase v31 Client Loaded.");
+        } catch (e) {
+          console.error("Firebase GAGAL di-load. Cek 'firebaseConfig'.", e);
+          alert("Error Konfigurasi Firebase! Cek konsol (F12).");
+          throw new Error("Firebase initialization failed."); 
+        }
 
-            // --- Referensi Elemen DOM ---
-            const loginPage = document.getElementById('login-page');
-            const remotePage = document.getElementById('remote-page');
-            const connectBtn = document.getElementById('connect-btn'); // <--- INI DIA
-            const loadingSpinner = document.getElementById('loading-spinner');
-            const clientIdInput = document.getElementById('client-id');
-            const helpBtn = document.getElementById('help-btn');
-            const toast = document.getElementById('toast-notification');
-            const toastMessage = document.getElementById('toast-message');
-            
-            // ... (Semua referensi DOM lainnya SAMA seperti v25) ...
-            // ... (Kita asumsikan semua ada) ...
-            const customUiOverlay = document.getElementById('custom-ui-overlay');
-            const statsOverlay = document.getElementById('stats-overlay');
-            const subscribeBtn = document.getElementById('subscribe-btn');
-            const premiumModal = document.getElementById('premium-modal');
-            const closePremiumModal = document.getElementById('close-premium-modal');
-            const settingsBtn = document.getElementById('settings-btn');
-            const settingsModal = document.getElementById('settings-modal');
-            const closeSettingsModal = document.getElementById('close-settings-modal');
-            const enterCustomizeBtn = document.getElementById('enter-customize-btn');
-            const disconnectBtn = document.getElementById('disconnect-btn');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            const toggleStatsBtn = document.getElementById('toggle-stats-btn');
-            const customizeBar = document.getElementById('customize-bar');
-            const exitCustomizeBtn = document.getElementById('exit-customize-btn');
-            const addKeyBtn = document.getElementById('add-key-btn');
-            const addJoystickBtn = document.getElementById('add-joystick-btn');
-            const addJoystickModal = document.getElementById('add-joystick-modal');
-            const closeAddJoystickModal = document.getElementById('close-add-joystick-modal');
-            const joystickStick = document.querySelector('.joystick-stick');
-            const globalKeyboardBtn = document.getElementById('global-keyboard-btn');
-            const slidingKeyboard = document.getElementById('sliding-keyboard');
-            const closeSlidingKeyboardBtn = document.getElementById('close-sliding-keyboard-btn');
-            const slidingKeyboardLayers = document.getElementById('sliding-keyboard-layers');
-            const bindingKeyboardModal = document.getElementById('binding-keyboard-modal');
-            const closeBindingKeyboardBtn = document.getElementById('close-binding-keyboard-btn');
-            const editKeyModal = document.getElementById('edit-key-modal');
-            const closeEditKeyModal = document.getElementById('close-edit-key-modal');
-            const editKeyLabel = document.getElementById('edit-key-label');
-            const editKeyCommand = document.getElementById('edit-key-command');
-            const editKeySize = document.getElementById('edit-key-size');
-            const editKeySizeValue = document.getElementById('edit-key-size-value');
-            const editKeyStyleWrapper = document.getElementById('edit-key-style-wrapper');
-            const editKeyModeWrapper = document.getElementById('edit-key-mode-wrapper');
-            const saveEditKeyBtn = document.getElementById('save-edit-key-btn');
-            const deleteKeyBtn = document.getElementById('delete-key-btn');
-            const editKeyLabelWrapper = document.getElementById('edit-key-label-wrapper');
-            const editKeyCommandWrapper = document.getElementById('edit-key-command-wrapper');
-            const editKeyStyleWrapperParent = document.getElementById('edit-key-style-wrapper-parent');
-            const editKeyModeWrapperParent = document.getElementById('edit-key-mode-wrapper-parent');
-            const buttonOpacitySlider = document.getElementById('button-opacity-slider');
-            const opacityValue = document.getElementById('opacity-value');
-            const toggleHapticsBtn = document.getElementById('toggle-haptics-btn');
-            const saveLayoutInput = document.getElementById('save-layout-input');
-            const saveLayoutBtn = document.getElementById('save-layout-btn');
-            const savedLayoutsList = document.getElementById('saved-layouts-list');
-            const loadLayoutInput = document.getElementById('load-layout-input');
-            const loadLayoutBtn = document.getElementById('load-layout-btn');
+        // --- 4. KODE APLIKASI UTAMA ---
+        // (Tidak perlu DOMContentLoaded karena script ada di akhir body)
 
-            // --- 1. Fungsi Notifikasi ---
-            function showToast(message, isError = false) {
-                if (!toast || !toastMessage) return; 
-                if (toastTimeout) clearTimeout(toastTimeout);
-                toastMessage.textContent = message;
-                toast.className = 'py-3 px-5 rounded-lg shadow-lg text-white'; 
-                toast.classList.add(isError ? 'bg-red-600' : 'bg-indigo-600');
-                toast.classList.add('show');
-                toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
-            }
+        // --- State Aplikasi ---
+        let isCustomizing = false;
+        let hapticsEnabled = false;
+        let isPremium = false;
+        let toastTimeout;
+        let savedLayouts = [];
+        let currentEditingElement = null;
 
-            // --- 2. Logika Modal (Umum) ---
-            function openModal(modal) {
-                if (!modal) return;
-                modal.classList.remove('hidden');
-                setTimeout(() => modal.classList.remove('opacity-0', 'scale-95'), 10);
-            }
-            function closeModal(modal) {
-                if (!modal) return;
-                modal.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 200);
-            }
-            
-            // --- 3. Logika Drag-and-Drop (Interact.js) ---
-            function dragMoveListener(event) {
-                const target = event.target;
-                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                target.style.transform = `translate(${x}px, ${y}px) scale(${target.dataset.scale || 1})`;
-                target.setAttribute('data-x', x);
-                target.setAttribute('data-y', y);
-            }
+        // --- Referensi Elemen DOM ---
+        const loginPage = document.getElementById('login-page');
+        const remotePage = document.getElementById('remote-page');
+        const connectBtn = document.getElementById('connect-btn');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const clientIdInput = document.getElementById('client-id');
+        const helpBtn = document.getElementById('help-btn');
+        const toast = document.getElementById('toast-notification');
+        const toastMessage = document.getElementById('toast-message');
+        const customUiOverlay = document.getElementById('custom-ui-overlay');
+        const statsOverlay = document.getElementById('stats-overlay');
+        const subscribeBtn = document.getElementById('subscribe-btn');
+        const premiumModal = document.getElementById('premium-modal');
+        const closePremiumModal = document.getElementById('close-premium-modal');
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsModal = document.getElementById('close-settings-modal');
+        const enterCustomizeBtn = document.getElementById('enter-customize-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const toggleStatsBtn = document.getElementById('toggle-stats-btn');
+        const customizeBar = document.getElementById('customize-bar');
+        const exitCustomizeBtn = document.getElementById('exit-customize-btn');
+        const addKeyBtn = document.getElementById('add-key-btn');
+        const addJoystickBtn = document.getElementById('add-joystick-btn');
+        const addJoystickModal = document.getElementById('add-joystick-modal');
+        const closeAddJoystickModal = document.getElementById('close-add-joystick-modal');
+        const joystickStick = document.querySelector('.joystick-stick');
+        const globalKeyboardBtn = document.getElementById('global-keyboard-btn');
+        const slidingKeyboard = document.getElementById('sliding-keyboard');
+        const closeSlidingKeyboardBtn = document.getElementById('close-sliding-keyboard-btn');
+        const slidingKeyboardLayers = document.getElementById('sliding-keyboard-layers');
+        const bindingKeyboardModal = document.getElementById('binding-keyboard-modal');
+        const closeBindingKeyboardBtn = document.getElementById('close-binding-keyboard-btn');
+        const editKeyModal = document.getElementById('edit-key-modal');
+        const closeEditKeyModal = document.getElementById('close-edit-key-modal');
+        const editKeyLabel = document.getElementById('edit-key-label');
+        const editKeyCommand = document.getElementById('edit-key-command');
+        const editKeySize = document.getElementById('edit-key-size');
+        const editKeySizeValue = document.getElementById('edit-key-size-value');
+        const editKeyStyleWrapper = document.getElementById('edit-key-style-wrapper');
+        const editKeyModeWrapper = document.getElementById('edit-key-mode-wrapper');
+        const saveEditKeyBtn = document.getElementById('save-edit-key-btn');
+        const deleteKeyBtn = document.getElementById('delete-key-btn');
+        const editKeyLabelWrapper = document.getElementById('edit-key-label-wrapper');
+        const editKeyCommandWrapper = document.getElementById('edit-key-command-wrapper');
+        const editKeyStyleWrapperParent = document.getElementById('edit-key-style-wrapper-parent');
+        const editKeyModeWrapperParent = document.getElementById('edit-key-mode-wrapper-parent');
+        const buttonOpacitySlider = document.getElementById('button-opacity-slider');
+        const opacityValue = document.getElementById('opacity-value');
+        const toggleHapticsBtn = document.getElementById('toggle-haptics-btn');
+        const saveLayoutInput = document.getElementById('save-layout-input');
+        const saveLayoutBtn = document.getElementById('save-layout-btn');
+        const savedLayoutsList = document.getElementById('saved-layouts-list');
+        const loadLayoutInput = document.getElementById('load-layout-input');
+        const loadLayoutBtn = document.getElementById('load-layout-btn');
 
-            let dragInteraction;
-            if (typeof interact !== 'undefined') {
-                dragInteraction = interact('.draggable').draggable({
-                    listeners: { move: dragMoveListener },
-                    inertia: true,
-                    modifiers: [ interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }) ],
-                    enabled: false
-                });
-            } else { console.error("interact.js tidak ter-load"); }
-            
-            // --- 4. Logika Joystick ---
-            if (typeof interact !== 'undefined' && joystickStick) {
-                interact(joystickStick).draggable({
-                    listeners: {
-                        move(event) {
-                            if (isCustomizing) return;
-                            const target = event.target, base = target.parentElement;
-                            if (!base) return;
-                            const baseRect = base.getBoundingClientRect(), stickRadius = target.offsetWidth / 2, baseRadius = base.offsetWidth / 2;
-                            let x = event.pageX - (baseRect.left + baseRadius), y = event.pageY - (baseRect.top + baseRadius);
-                            const distance = Math.sqrt(x*x + y*y), maxDistance = baseRadius - stickRadius;
-                            if (distance > maxDistance) { x = (x / distance) * maxDistance; y = (y / distance) * maxDistance; }
-                            target.style.transform = `translate(${x}px, ${y}px)`;
-                            performHapticFeedback();
-                            // TODO: Kirim data joystick (x/maxDistance, y/maxDistance)
-                        },
-                        end(event) { 
-                            event.target.style.transform = 'translate(0px, 0px)';
-                            // TODO: Kirim data joystick (0, 0)
-                        }
+        // --- 1. Fungsi Notifikasi ---
+        function showToast(message, isError = false) {
+            if (!toast || !toastMessage) return; 
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastMessage.textContent = message;
+            toast.className = 'py-3 px-5 rounded-lg shadow-lg text-white'; 
+            toast.classList.add(isError ? 'bg-red-600' : 'bg-indigo-600');
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // --- 2. Logika Modal (Umum) ---
+        function openModal(modal) {
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0', 'scale-95'), 10);
+        }
+        function closeModal(modal) {
+            if (!modal) return;
+            modal.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+        
+        // --- 3. Logika Drag-and-Drop (Interact.js) ---
+        function dragMoveListener(event) {
+            const target = event.target;
+            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+            target.style.transform = `translate(${x}px, ${y}px) scale(${target.dataset.scale || 1})`;
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        }
+
+        let dragInteraction;
+        if (typeof interact !== 'undefined') {
+            dragInteraction = interact('.draggable').draggable({
+                listeners: { move: dragMoveListener },
+                inertia: true,
+                modifiers: [ interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }) ],
+                enabled: false
+            });
+        } else { console.error("interact.js tidak ter-load"); }
+        
+        // --- 4. Logika Joystick ---
+        if (typeof interact !== 'undefined' && joystickStick) {
+            interact(joystickStick).draggable({
+                listeners: {
+                    move(event) {
+                        if (isCustomizing) return;
+                        const target = event.target, base = target.parentElement;
+                        if (!base) return;
+                        const baseRect = base.getBoundingClientRect(), stickRadius = target.offsetWidth / 2, baseRadius = base.offsetWidth / 2;
+                        let x = event.pageX - (baseRect.left + baseRadius), y = event.pageY - (baseRect.top + baseRadius);
+                        const distance = Math.sqrt(x*x + y*y), maxDistance = baseRadius - stickRadius;
+                        if (distance > maxDistance) { x = (x / distance) * maxDistance; y = (y / distance) * maxDistance; }
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        performHapticFeedback();
                     },
-                    enabled: true
-                });
-            }
+                    end(event) { 
+                        event.target.style.transform = 'translate(0px, 0px)';
+                    }
+                },
+                enabled: true
+            });
+        }
 
-            // --- 5. Logika Kustomisasi ---
-            function toggleCustomizationMode(forceOff = false) {
-                isCustomizing = forceOff ? false : !isCustomizing;
-                if (customUiOverlay) customUiOverlay.classList.toggle('customization-active', isCustomizing);
-                if (dragInteraction) dragInteraction.draggable({ enabled: isCustomizing });
-                if (isCustomizing) {
-                    if (customizeBar) customizeBar.classList.remove('hidden');
-                    if (globalKeyboardBtn) globalKeyboardBtn.style.display = 'none';
-                    closeModal(settingsModal);
-                    showToast('Mode Kustomisasi AKTIF');
-                } else {
-                    if (customizeBar) customizeBar.classList.add('hidden');
-                    if (globalKeyboardBtn) globalKeyboardBtn.style.display = 'flex';
-                    showToast('Tata Letak Disimpan');
-                }
+        // --- 5. Logika Kustomisasi ---
+        function toggleCustomizationMode(forceOff = false) {
+            isCustomizing = forceOff ? false : !isCustomizing;
+            if (customUiOverlay) customUiOverlay.classList.toggle('customization-active', isCustomizing);
+            if (dragInteraction) dragInteraction.draggable({ enabled: isCustomizing });
+            if (isCustomizing) {
+                if (customizeBar) customizeBar.classList.remove('hidden');
+                if (globalKeyboardBtn) globalKeyboardBtn.style.display = 'none';
+                if (settingsModal) closeModal(settingsModal);
+                showToast('Mode Kustomisasi AKTIF');
+            } else {
+                if (customizeBar) customizeBar.classList.add('hidden');
+                if (globalKeyboardBtn) globalKeyboardBtn.style.display = 'flex';
+                showToast('Tata Letak Disimpan');
             }
+        }
+        
+        function addNewDraggable(type, label = '', command = '') {
+            const newEl = document.createElement('div');
+            newEl.classList.add('draggable');
+            newEl.style.top = '50%';
+            newEl.style.left = '50%';
             
-            function addNewDraggable(type, label = '', command = '') {
-                const newEl = document.createElement('div');
-                newEl.classList.add('draggable');
-                newEl.style.top = '50%';
-                newEl.style.left = '50%';
-                
-                const editSpan = document.createElement('span');
-                editSpan.classList.add('edit-btn-overlay');
-                editSpan.innerHTML = '<i class="fas fa-cog"></i>';
-                newEl.appendChild(editSpan);
+            const editSpan = document.createElement('span');
+            editSpan.classList.add('edit-btn-overlay');
+            editSpan.innerHTML = '<i class="fas fa-cog"></i>';
+            newEl.appendChild(editSpan);
 
-                if (type === 'key') {
-                    newEl.dataset.command = command;
-                    newEl.dataset.label = label;
-                    newEl.dataset.scale = "1.0";
-                    newEl.dataset.style = "circle";
-                    newEl.dataset.mode = "press";
-                    
-                    const textSpan = document.createElement('span');
-                    textSpan.classList.add('font-bold', 'btn-label');
-                    if (command === 'SPECIAL_PASTE') {
-                        textSpan.innerHTML = `<i class="fas fa-paste"></i>`;
-                        newEl.dataset.label = "Paste";
-                    } else {
-                        textSpan.innerHTML = label;
-                    }
-                    newEl.appendChild(textSpan);
-                    addResponsiveListener(newEl);
-                } else if (type === 'analog') {
-                    newEl.classList.add('joystick-base');
-                    newEl.dataset.label = "Joystick Analog";
-                    newEl.dataset.command = "JOYSTICK";
-                    newEl.dataset.scale = "1.0";
-                    newEl.dataset.style = "analog";
-                    newEl.dataset.mode = "press";
-                    const stick = document.createElement('div');
-                    stick.classList.add('joystick-stick');
-                    newEl.appendChild(stick);
-                    if (typeof interact !== 'undefined') {
-                        interact(stick).draggable({
-                            listeners: {
-                                move(event) {
-                                    if (isCustomizing) return;
-                                    const target = event.target, base = target.parentElement;
-                                    const baseRect = base.getBoundingClientRect(), stickRadius = target.offsetWidth / 2, baseRadius = base.offsetWidth / 2;
-                                    let x = event.pageX - (baseRect.left + baseRadius), y = event.pageY - (baseRect.top + baseRadius);
-                                    const distance = Math.sqrt(x*x + y*y), maxDistance = baseRadius - stickRadius;
-                                    if (distance > maxDistance) { x = (x / distance) * maxDistance; y = (y / distance) * maxDistance; }
-                                    target.style.transform = `translate(${x}px, ${y}px)`;
-                                    performHapticFeedback();
-                                },
-                                end(event) { event.target.style.transform = 'translate(0px, 0px)'; }
-                            },
-                            enabled: true
-                        });
-                    }
-                } else if (type === 'dpad') {
-                    newEl.classList.add('d-pad-base');
-                    newEl.dataset.label = "D-Pad";
-                    newEl.dataset.command = "DPAD";
-                    newEl.dataset.scale = "1.0";
-                    newEl.dataset.style = "dpad";
-                    newEl.dataset.mode = "press";
-                    newEl.innerHTML += `
-                        <div class="d-pad-btn d-pad-up" data-command="W"><i class="fas fa-caret-up"></i></div>
-                        <div class="d-pad-btn d-pad-left" data-command="A"><i class="fas fa-caret-left"></i></div>
-                        <div class="d-pad-center"></div>
-                        <div class="d-pad-btn d-pad-right" data-command="D"><i class="fas fa-caret-right"></i></div>
-                        <div class="d-pad-btn d-pad-down" data-command="S"><i class="fas fa-caret-down"></i></div>
-                    `;
-                    newEl.querySelectorAll('.d-pad-btn').forEach(addResponsiveListener);
+            if (type === 'key') {
+                newEl.dataset.command = command;
+                newEl.dataset.label = label;
+                newEl.dataset.scale = "1.0";
+                newEl.dataset.style = "circle";
+                newEl.dataset.mode = "press";
+                
+                const textSpan = document.createElement('span');
+                textSpan.classList.add('font-bold', 'btn-label');
+                if (command === 'SPECIAL_PASTE') {
+                    textSpan.innerHTML = `<i class="fas fa-paste"></i>`;
+                    newEl.dataset.label = "Paste";
+                } else {
+                    textSpan.innerHTML = label;
                 }
-                
-                if (customUiOverlay) customUiOverlay.appendChild(newEl);
-                addEditListener(newEl);
-                
-                if (dragInteraction) {
-                    interact(newEl).draggable({
-                        listeners: { move: dragMoveListener },
-                        inertia: true,
-                        modifiers: [ interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }) ],
+                newEl.appendChild(textSpan);
+                addResponsiveListener(newEl);
+            } else if (type === 'analog') {
+                newEl.classList.add('joystick-base');
+                newEl.dataset.label = "Joystick Analog";
+                newEl.dataset.command = "JOYSTICK";
+                newEl.dataset.scale = "1.0";
+                newEl.dataset.style = "analog";
+                newEl.dataset.mode = "press";
+                const stick = document.createElement('div');
+                stick.classList.add('joystick-stick');
+                newEl.appendChild(stick);
+                if (typeof interact !== 'undefined') {
+                    interact(stick).draggable({
+                        listeners: {
+                            move(event) {
+                                if (isCustomizing) return;
+                                const target = event.target, base = target.parentElement;
+                                const baseRect = base.getBoundingClientRect(), stickRadius = target.offsetWidth / 2, baseRadius = base.offsetWidth / 2;
+                                let x = event.pageX - (baseRect.left + baseRadius), y = event.pageY - (baseRect.top + baseRadius);
+                                const distance = Math.sqrt(x*x + y*y), maxDistance = baseRadius - stickRadius;
+                                if (distance > maxDistance) { x = (x / distance) * maxDistance; y = (y / distance) * maxDistance; }
+                                target.style.transform = `translate(${x}px, ${y}px)`;
+                                performHapticFeedback();
+                            },
+                            end(event) { event.target.style.transform = 'translate(0px, 0px)'; }
+                        },
                         enabled: true
                     });
                 }
+            } else if (type === 'dpad') {
+                newEl.classList.add('d-pad-base');
+                newEl.dataset.label = "D-Pad";
+                newEl.dataset.command = "DPAD";
+                newEl.dataset.scale = "1.0";
+                newEl.dataset.style = "dpad";
+                newEl.dataset.mode = "press";
+                newEl.innerHTML += `
+                    <div class="d-pad-btn d-pad-up" data-command="W"><i class="fas fa-caret-up"></i></div>
+                    <div class="d-pad-btn d-pad-left" data-command="A"><i class="fas fa-caret-left"></i></div>
+                    <div class="d-pad-center"></div>
+                    <div class="d-pad-btn d-pad-right" data-command="D"><i class="fas fa-caret-right"></i></div>
+                    <div class="d-pad-btn d-pad-down" data-command="S"><i class="fas fa-caret-down"></i></div>
+                `;
+                newEl.querySelectorAll('.d-pad-btn').forEach(addResponsiveListener);
             }
+            
+            if (customUiOverlay) customUiOverlay.appendChild(newEl);
+            addEditListener(newEl);
+            
+            if (dragInteraction) {
+                interact(newEl).draggable({
+                    listeners: { move: dragMoveListener },
+                    inertia: true,
+                    modifiers: [ interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }) ],
+                    enabled: true
+                });
+            }
+        }
 
-            // --- 6. Event Listeners ---
-            
-            // PERUBAHAN v26: Listener di 'connectBtn' (BUTTON) bukan 'loginForm' (FORM)
-            if (connectBtn) {
-                connectBtn.addEventListener('click', async (e) => {
-                    // e.preventDefault(); // Tidak perlu lagi
-                    
-                    if (!window.db || !window.createDocRef) {
-                        showToast("Firebase sedang dimuat, coba lagi sebentar...", true);
-                        return;
-                    }
-                    
-                    if (connectBtn) connectBtn.disabled = true;
-                    if (loadingSpinner) loadingSpinner.classList.remove('hidden');
-                    
-                    const partnerId = clientIdInput.value;
-                    const password = document.getElementById('password').value;
-                    
-                    if (!partnerId) {
-                        showToast("Partner ID tidak boleh kosong", true);
-                        if (connectBtn) connectBtn.disabled = false;
-                        if (loadingSpinner) loadingSpinner.classList.add('hidden');
-                        return;
-                    }
-                    
-                    showToast(`Otentikasi ke ${partnerId}...`);
-                    
-                    // Set referensi dokumen untuk dikontrol
-                    try {
-                        window.docRef = window.createDocRef(window.db, "commands", partnerId);
-                    
-                        // Simulasi delay (di dunia nyata, kamu akan cek password di sini)
-                        setTimeout(() => {
-                            if (connectBtn) connectBtn.disabled = false;
-                            if (loadingSpinner) loadingSpinner.classList.add('hidden');
-                            
-                            if (loginPage) loginPage.style.display = 'none'; 
-                            if (remotePage) remotePage.style.display = 'flex'; 
-                            
-                            showToast(`Terhubung ke ${partnerId}!`);
-                            sendFirestoreCommand("connection_test", "hello");
-                            
-                        }, 1000);
-                        
-                    } catch (err) {
-                        console.error("Firebase Error:", err);
-                        showToast(`Error: ${err.message}`, true);
-                        if (connectBtn) connectBtn.disabled = false;
-                        if (loadingSpinner) loadingSpinner.classList.add('hidden');
-                    }
-                });
-            } 
-            
-            if (helpBtn) {
-                 helpBtn.addEventListener('click', () => {
-                    showToast('Membuka tutorial... (Simulasi)');
-                });
-            }
-            
-            if (subscribeBtn) subscribeBtn.addEventListener('click', () => openModal(premiumModal));
-            if (closePremiumModal) closePremiumModal.addEventListener('click', () => closeModal(premiumModal));
-            
-            document.body.addEventListener('click', (e) => {
-                const target = e.target.closest('[data-premium-feature="true"]');
-                if (target) {
-                    if (!isPremium) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (settingsModal && !settingsModal.classList.contains('hidden')) {
-                            closeModal(settingsModal);
-                        }
-                        openModal(premiumModal);
-                    }
+        // --- 6. Event Listeners ---
+        
+        if (connectBtn) {
+            connectBtn.addEventListener('click', async (e) => {
+                
+                if (!db || !createDocRef) {
+                    showToast("Firebase sedang dimuat, coba lagi sebentar...", true);
+                    return;
                 }
-            }, true);
+                
+                if (connectBtn) connectBtn.disabled = true;
+                if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+                
+                const partnerId = clientIdInput.value;
+                const password = document.getElementById('password').value;
+                
+                if (!partnerId) {
+                    showToast("Partner ID tidak boleh kosong", true);
+                    if (connectBtn) connectBtn.disabled = false;
+                    if (loadingSpinner) loadingSpinner.classList.add('hidden');
+                    return;
+                }
+                
+                showToast(`Otentikasi ke ${partnerId}...`);
+                
+                try {
+                    docRef = createDocRef(db, "commands", partnerId);
+                
+                    setTimeout(() => {
+                        if (connectBtn) connectBtn.disabled = false;
+                        if (loadingSpinner) loadingSpinner.classList.add('hidden');
+                        
+                        if (loginPage) loginPage.style.display = 'none'; 
+                        if (remotePage) remotePage.style.display = 'flex'; 
+                        
+                        showToast(`Terhubung ke ${partnerId}!`);
+                        sendFirestoreCommand("connection_test", "hello");
+                        
+                    }, 1000);
+                    
+                } catch (err) {
+                    console.error("Firebase Error:", err);
+                    showToast(`Error: ${err.message}`, true);
+                    if (connectBtn) connectBtn.disabled = false;
+                    if (loadingSpinner) loadingSpinner.classList.add('hidden');
+                }
+            });
+        } else {
+            console.error("GAGAL: Tombol 'connect-btn' tidak ditemukan.");
+        }
+        
+        if (helpBtn) {
+             helpBtn.addEventListener('click', () => {
+                showToast('Membuka tutorial... (Simulasi)');
+            });
+        }
+        
+        if (subscribeBtn) subscribeBtn.addEventListener('click', () => openModal(premiumModal));
+        if (closePremiumModal) closePremiumModal.addEventListener('click', () => closeModal(premiumModal));
+        
+        document.body.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-premium-feature="true"]');
+            if (target) {
+                if (!isPremium) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (settingsModal && !settingsModal.classList.contains('hidden')) {
+                        closeModal(settingsModal);
+                    }
+                    openModal(premiumModal);
+                }
+            }
+        }, true);
 
-            if (settingsBtn) settingsBtn.addEventListener('click', () => openModal(settingsModal));
-            if (closeSettingsModal) closeSettingsModal.addEventListener('click', () => closeModal(settingsModal));
-            
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
+        if (settingsBtn) settingsBtn.addEventListener('click', () => openModal(settingsModal));
+        if (closeSettingsModal) closeSettingsModal.addEventListener('click', () => closeModal(settingsModal));
+        
+        // PERBAIKAN v31: Mengganti 'tdbButtons' menjadi 'tabButtons'
+        const tabButtons = document.querySelectorAll('.tab-btn'); 
+        const tabContents = document.querySelectorAll('.tab-content');
+        if(tabButtons && tabContents) {
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tabId = btn.dataset.tab;
@@ -600,257 +931,256 @@
                     if (activeTabContent) activeTabContent.classList.add('active');
                 });
             });
-            
-            if (settingsModal) {
-                settingsModal.addEventListener('click', (e) => {
-                    const targetBtn = e.target.closest('.choice-btn:not([data-premium-feature="true"])');
-                    if (!targetBtn) return;
-                    
-                    const parent = targetBtn.parentElement;
-                    if (parent) {
-                        parent.querySelectorAll('.choice-btn').forEach(btn => {
-                            btn.classList.remove('active');
-                        });
-                    }
-                    targetBtn.classList.add('active');
-                });
-            }
-
-            if (toggleStatsBtn) {
-                toggleStatsBtn.addEventListener('change', (e) => {
-                     if (statsOverlay) statsOverlay.classList.toggle('hidden', !e.target.checked);
-                });
-            }
-            if (toggleHapticsBtn) {
-                toggleHapticsBtn.addEventListener('change', (e) => {
-                    hapticsEnabled = e.target.checked;
-                    showToast(hapticsEnabled ? 'Getar Aktif' : 'Getar Nonaktif');
-                    if(hapticsEnabled) performHapticFeedback(100);
-                });
-            }
-            
-            if (disconnectBtn) {
-                disconnectBtn.addEventListener('click', () => {
-                    window.docRef = null;
-                    if (remotePage) remotePage.style.display = 'none';
-                    if (loginPage) loginPage.style.display = 'flex';
-                    closeModal(settingsModal);
-                    if (isCustomizing) toggleCustomizationMode(true);
-                    showToast('Disconnected from session.');
-                    if (document.fullscreenElement) document.exitFullscreen();
-                });
-            }
-            
-            if (enterCustomizeBtn) enterCustomizeBtn.addEventListener('click', () => toggleCustomizationMode(false));
-            if (exitCustomizeBtn) exitCustomizeBtn.addEventListener('click', () => toggleCustomizationMode(true));
-
-            function addEditListener(element) {
-                element.addEventListener('click', (e) => {
-                    if (isCustomizing && e.target.closest('.draggable') === element) {
-                        e.stopPropagation();
-                        currentEditingElement = element;
-                        openEditModal(element);
-                    }
-                });
-            }
-            
-            document.querySelectorAll('.draggable').forEach(addEditListener);
-
-            function openEditModal(el) {
-                const label = el.dataset.label || '';
-                const command = el.dataset.command || 'N/A';
-                const scale = el.dataset.scale || "1.0";
-                const style = el.dataset.style || "circle";
-                const mode = el.dataset.mode || "press";
+        }
+        
+        if (settingsModal) {
+            settingsModal.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.choice-btn:not([data-premium-feature="true"])');
+                if (!targetBtn) return;
                 
-                if (editKeyLabel) editKeyLabel.value = label;
-                if (editKeyCommand) editKeyCommand.value = command;
-                if (editKeySize) editKeySize.value = parseFloat(scale) * 100;
-                if (editKeySizeValue) editKeySizeValue.textContent = Math.round(parseFloat(scale) * 100);
-
-                if (editKeyStyleWrapper) {
-                    editKeyStyleWrapper.querySelectorAll('.choice-btn').forEach(btn => {
-                        btn.classList.toggle('active', btn.dataset.style === style);
+                const parent = targetBtn.parentElement;
+                if (parent) {
+                    parent.querySelectorAll('.choice-btn').forEach(btn => {
+                        btn.classList.remove('active');
                     });
                 }
-                if (editKeyModeWrapper) {
-                    editKeyModeWrapper.querySelectorAll('.choice-btn').forEach(btn => {
-                        btn.classList.toggle('active', btn.dataset.mode === mode);
-                    });
-                }
-                
-                const isSpecialButton = style === 'analog' || style === 'dpad' || command === 'SPECIAL_PASTE';
-                if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'block';
-                if (editKeyCommandWrapper) editKeyCommandWrapper.style.display = isSpecialButton ? 'none' : 'block';
-                if (editKeyStyleWrapperParent) editKeyStyleWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
-                if (editKeyModeWrapperParent) editKeyModeWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
-                
-                if(command === 'SPECIAL_PASTE') {
-                    if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'none';
-                }
+                targetBtn.classList.add('active');
+            });
+        }
 
-                openModal(editKeyModal);
-            }
+        if (toggleStatsBtn) {
+            toggleStatsBtn.addEventListener('change', (e) => {
+                 if (statsOverlay) statsOverlay.classList.toggle('hidden', !e.target.checked);
+            });
+        }
+        if (toggleHapticsBtn) {
+            toggleHapticsBtn.addEventListener('change', (e) => {
+                hapticsEnabled = e.target.checked;
+                showToast(hapticsEnabled ? 'Getar Aktif' : 'Getar Nonaktif');
+                if(hapticsEnabled) performHapticFeedback(100);
+            });
+        }
+        
+        if (disconnectBtn) {
+            disconnectBtn.addEventListener('click', () => {
+                docRef = null;
+                if (remotePage) remotePage.style.display = 'none';
+                if (loginPage) loginPage.style.display = 'flex';
+                closeModal(settingsModal);
+                if (isCustomizing) toggleCustomizationMode(true);
+                showToast('Disconnected from session.');
+                if (document.fullscreenElement) document.exitFullscreen();
+            });
+        }
+        
+        if (enterCustomizeBtn) enterCustomizeBtn.addEventListener('click', () => toggleCustomizationMode(false));
+        if (exitCustomizeBtn) exitCustomizeBtn.addEventListener('click', () => toggleCustomizationMode(true));
+
+        function addEditListener(element) {
+            element.addEventListener('click', (e) => {
+                if (isCustomizing && e.target.closest('.draggable') === element) {
+                    e.stopPropagation();
+                    currentEditingElement = element;
+                    openEditModal(element);
+                }
+            });
+        }
+        
+        document.querySelectorAll('.draggable').forEach(addEditListener);
+
+        function openEditModal(el) {
+            const label = el.dataset.label || '';
+            const command = el.dataset.command || 'N/A';
+            const scale = el.dataset.scale || "1.0";
+            const style = el.dataset.style || "circle";
+            const mode = el.dataset.mode || "press";
             
-            if (closeEditKeyModal) closeEditKeyModal.addEventListener('click', () => closeModal(editKeyModal));
-            
-            if (saveEditKeyBtn) {
-                saveEditKeyBtn.addEventListener('click', () => {
-                    if (!currentEditingElement) return;
-                    
-                    const newLabel = editKeyLabel.value;
-                    const newScale = parseFloat(editKeySize.value) / 100;
-                    const newStyle = editKeyStyleWrapper.querySelector('.active')?.dataset.style || currentEditingElement.dataset.style;
-                    const newMode = editKeyModeWrapper.querySelector('.active')?.dataset.mode || currentEditingElement.dataset.mode;
-                    
-                    currentEditingElement.dataset.label = newLabel;
-                    currentEditingElement.dataset.scale = newScale.toFixed(2);
-                    currentEditingElement.dataset.style = newStyle;
-                    currentEditingElement.dataset.mode = newMode;
-                    
-                    const labelEl = currentEditingElement.querySelector('.btn-label');
-                    if (labelEl) {
-                        if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE') {
-                             labelEl.textContent = newLabel;
-                        }
-                    }
-                    
-                    if (newStyle === 'rectangle') {
-                        currentEditingElement.classList.add('text-btn');
-                    } else {
-                        currentEditingElement.classList.remove('text-btn');
-                    }
-                    
-                    const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0;
-                    const y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0;
-                    currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`;
-                    
-                    showToast('Tombol diperbarui!');
-                    closeModal(editKeyModal);
-                    currentEditingElement = null;
-                });
-            }
-            
-            if (deleteKeyBtn) {
-                deleteKeyBtn.addEventListener('click', () => {
-                    if (!currentEditingElement) return;
-                    currentEditingElement.remove();
-                    showToast('Tombol dihapus');
-                    closeModal(editKeyModal);
-                    currentEditingElement = null;
-                });
-            }
-            
-            if (editKeySize) {
-                editKeySize.addEventListener('input', (e) => {
-                    if (editKeySizeValue) editKeySizeValue.textContent = e.target.value;
-                    if (currentEditingElement) {
-                        const newScale = parseFloat(e.target.value) / 100;
-                        const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0;
-                        const y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0;
-                        currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`;
-                    }
-                });
-            }
+            if (editKeyLabel) editKeyLabel.value = label;
+            if (editKeyCommand) editKeyCommand.value = command;
+            if (editKeySize) editKeySize.value = parseFloat(scale) * 100;
+            if (editKeySizeValue) editKeySizeValue.textContent = Math.round(parseFloat(scale) * 100);
 
             if (editKeyStyleWrapper) {
-                editKeyStyleWrapper.addEventListener('click', (e) => {
-                    const targetBtn = e.target.closest('.choice-btn');
-                    if (!targetBtn) return;
-                    editKeyStyleWrapper.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
-                    targetBtn.classList.add('active');
+                editKeyStyleWrapper.querySelectorAll('.choice-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.style === style);
                 });
             }
             if (editKeyModeWrapper) {
-                editKeyModeWrapper.addEventListener('click', (e) => {
-                    const targetBtn = e.target.closest('.choice-btn');
-                    if (!targetBtn) return;
-                    editKeyModeWrapper.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
-                    targetBtn.classList.add('active');
+                editKeyModeWrapper.querySelectorAll('.choice-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.mode === mode);
                 });
             }
             
-            // --- Logika Keyboard v21 ---
+            const isSpecialButton = style === 'analog' || style === 'dpad' || command === 'SPECIAL_PASTE';
+            if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'block';
+            if (editKeyCommandWrapper) editKeyCommandWrapper.style.display = isSpecialButton ? 'none' : 'block';
+            if (editKeyStyleWrapperParent) editKeyStyleWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
+            if (editKeyModeWrapperParent) editKeyModeWrapperParent.style.display = isSpecialButton ? 'none' : 'block';
             
-            // 1. Keyboard BINDING (Popup)
-            if (addKeyBtn) {
-                addKeyBtn.addEventListener('click', () => {
-                    openModal(bindingKeyboardModal);
-                });
+            if(command === 'SPECIAL_PASTE') {
+                if (editKeyLabelWrapper) editKeyLabelWrapper.style.display = 'none';
             }
-            if (closeBindingKeyboardBtn) {
-                 closeBindingKeyboardBtn.addEventListener('click', () => {
+
+            openModal(editKeyModal);
+        }
+        
+        if (closeEditKeyModal) closeEditKeyModal.addEventListener('click', () => closeModal(editKeyModal));
+        
+        if (saveEditKeyBtn) {
+            saveEditKeyBtn.addEventListener('click', () => {
+                if (!currentEditingElement) return;
+                
+                const newLabel = editKeyLabel.value;
+                const newScale = parseFloat(editKeySize.value) / 100;
+                const newStyle = editKeyStyleWrapper.querySelector('.active')?.dataset.style || currentEditingElement.dataset.style;
+                const newMode = editKeyModeWrapper.querySelector('.active')?.dataset.mode || currentEditingElement.dataset.mode;
+                
+                currentEditingElement.dataset.label = newLabel;
+                currentEditingElement.dataset.scale = newScale.toFixed(2);
+                currentEditingElement.dataset.style = newStyle;
+                currentEditingElement.dataset.mode = newMode;
+                
+                const labelEl = currentEditingElement.querySelector('.btn-label');
+                if (labelEl) {
+                    if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE') {
+                         labelEl.textContent = newLabel;
+                    }
+                }
+                
+                if (newStyle === 'rectangle') {
+                    currentEditingElement.classList.add('text-btn');
+                } else {
+                    currentEditingElement.classList.remove('text-btn');
+                }
+                
+                const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0;
+                const y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0;
+                currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`;
+                
+                showToast('Tombol diperbarui!');
+                closeModal(editKeyModal);
+                currentEditingElement = null;
+            });
+        }
+        
+        if (deleteKeyBtn) {
+            deleteKeyBtn.addEventListener('click', () => {
+                if (!currentEditingElement) return;
+                currentEditingElement.remove();
+                showToast('Tombol dihapus');
+                closeModal(editKeyModal);
+                currentEditingElement = null;
+            });
+        }
+        
+        if (editKeySize) {
+            editKeySize.addEventListener('input', (e) => {
+                if (editKeySizeValue) editKeySizeValue.textContent = e.target.value;
+                if (currentEditingElement) {
+                    const newScale = parseFloat(e.target.value) / 100;
+                    const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0;
+                    const y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0;
+                    currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`;
+                }
+            });
+        }
+
+        if (editKeyStyleWrapper) {
+            editKeyStyleWrapper.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.choice-btn');
+                if (!targetBtn) return;
+                editKeyStyleWrapper.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+                targetBtn.classList.add('active');
+            });
+        }
+        if (editKeyModeWrapper) {
+            editKeyModeWrapper.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.choice-btn');
+                if (!targetBtn) return;
+                editKeyModeWrapper.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
+                targetBtn.classList.add('active');
+            });
+        }
+        
+        // --- Logika Keyboard ---
+        
+        if (addKeyBtn) {
+            addKeyBtn.addEventListener('click', () => {
+                openModal(bindingKeyboardModal);
+            });
+        }
+        if (closeBindingKeyboardBtn) {
+             closeBindingKeyboardBtn.addEventListener('click', () => {
+                closeModal(bindingKeyboardModal);
+            });
+        }
+        if (bindingKeyboardModal) {
+            bindingKeyboardModal.querySelectorAll('.kbd-key').forEach(key => {
+                key.addEventListener('click', () => {
+                    const keyVal = key.dataset.key;
+                    if (!keyVal) return;
+                    const label = (keyVal === 'SPECIAL_PASTE') ? 'Paste' : (keyVal.length > 1 ? keyVal : keyVal.toUpperCase());
+                    addNewDraggable('key', label, keyVal);
                     closeModal(bindingKeyboardModal);
+                    showToast(`Tombol "${label}" ditambahkan! Klik untuk edit.`);
                 });
-            }
-            if (bindingKeyboardModal) {
-                bindingKeyboardModal.querySelectorAll('.kbd-key').forEach(key => {
-                    key.addEventListener('click', () => {
-                        const keyVal = key.dataset.key;
-                        if (!keyVal) return;
-                        const label = (keyVal === 'SPECIAL_PASTE') ? 'Paste' : (keyVal.length > 1 ? keyVal : keyVal.toUpperCase());
-                        addNewDraggable('key', label, keyVal);
-                        closeModal(bindingKeyboardModal);
-                        showToast(`Tombol "${label}" ditambahkan! Klik untuk edit.`);
-                    });
-                });
-            }
+            });
+        }
 
-            // 2. Keyboard SLIDING (In-Game)
-            if (globalKeyboardBtn) {
-                globalKeyboardBtn.addEventListener('click', () => {
-                    if (slidingKeyboard) slidingKeyboard.classList.add('show');
-                    switchKeyboardLayer('kbd-layer-main'); // Selalu reset
-                });
-            }
-            if (closeSlidingKeyboardBtn) {
-                closeSlidingKeyboardBtn.addEventListener('click', () => {
-                    if (slidingKeyboard) slidingKeyboard.classList.remove('show');
-                });
-            }
+        if (globalKeyboardBtn) {
+            globalKeyboardBtn.addEventListener('click', () => {
+                if (slidingKeyboard) slidingKeyboard.classList.add('show');
+                switchKeyboardLayer('kbd-layer-main'); // Selalu reset
+            });
+        }
+        if (closeSlidingKeyboardBtn) {
+            closeSlidingKeyboardBtn.addEventListener('click', () => {
+                if (slidingKeyboard) slidingKeyboard.classList.remove('show');
+            });
+        }
 
-            function switchKeyboardLayer(layerId) {
-                if (!slidingKeyboardLayers) return;
-                slidingKeyboardLayers.querySelectorAll('.kbd-layer').forEach(layer => {
-                    layer.classList.remove('active', 'hidden');
-                    if (layer.id.startsWith(layerId)) {
-                        layer.classList.add('active');
+        function switchKeyboardLayer(layerId) {
+            if (!slidingKeyboardLayers) return;
+            slidingKeyboardLayers.querySelectorAll('.kbd-layer').forEach(layer => {
+                layer.classList.remove('active', 'hidden');
+                if (layer.id.startsWith(layerId)) {
+                    layer.classList.add('active');
+                } else {
+                    layer.classList.add('hidden');
+                }
+            });
+        }
+
+        if (slidingKeyboard) {
+            slidingKeyboard.querySelectorAll('.kbd-key').forEach(key => {
+                key.addEventListener('click', () => {
+                    const keyVal = key.dataset.key;
+                    if (!keyVal) return;
+                    performHapticFeedback();
+                    
+                    if (keyVal === '?123') { switchKeyboardLayer('kbd-layer-symbols1'); return; }
+                    if (keyVal === 'ABC') { switchKeyboardLayer('kbd-layer-main'); return; }
+                    if (keyVal === '#{<') { switchKeyboardLayer('kbd-layer-symbols2'); return; }
+                    
+                    if (keyVal === 'SPECIAL_PASTE') {
+                        handlePasteCommand();
                     } else {
-                        layer.classList.add('hidden');
+                        sendFirestoreCommand('key_press', keyVal);
+                        showToast(`Mengirim: ${keyVal}`);
                     }
                 });
-            }
+            });
+        }
+        
+        if (addJoystickBtn) {
+            addJoystickBtn.addEventListener('click', () => {
+                openModal(addJoystickModal);
+            });
+        }
+        if (closeAddJoystickModal) closeAddJoystickModal.addEventListener('click', () => closeModal(addJoystickModal));
 
-            if (slidingKeyboard) {
-                slidingKeyboard.querySelectorAll('.kbd-key').forEach(key => {
-                    key.addEventListener('click', () => {
-                        const keyVal = key.dataset.key;
-                        if (!keyVal) return;
-                        performHapticFeedback();
-                        
-                        if (keyVal === '?123') { switchKeyboardLayer('kbd-layer-symbols1'); return; }
-                        if (keyVal === 'ABC') { switchKeyboardLayer('kbd-layer-main'); return; }
-                        if (keyVal === '#{<') { switchKeyboardLayer('kbd-layer-symbols2'); return; }
-                        
-                        if (keyVal === 'SPECIAL_PASTE') {
-                            handlePasteCommand();
-                        } else {
-                            sendFirestoreCommand('key_press', keyVal);
-                            showToast(`Mengirim: ${keyVal}`);
-                        }
-                    });
-                });
-            }
-            
-            // Alur Tambah Joystick
-            if (addJoystickBtn) {
-                addJoystickBtn.addEventListener('click', () => {
-                    openModal(addJoystickModal);
-                });
-            }
-            if (closeAddJoystickModal) closeAddJoystickModal.addEventListener('click', () => closeModal(addJoystickModal));
-
-            document.querySelectorAll('.add-control-sim-btn').forEach(btn => {
+        if(addJoystickModal) {
+            addJoystickModal.querySelectorAll('.add-control-sim-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const type = btn.dataset.type;
                     if (type === 'analog') {
@@ -863,190 +1193,190 @@
                     closeModal(addJoystickModal);
                 });
             });
+        }
 
-            // Haptic Feedback
-            function performHapticFeedback(duration = 50) {
-                if (hapticsEnabled && navigator.vibrate) {
-                    navigator.vibrate(duration);
-                }
+        // Haptic Feedback
+        function performHapticFeedback(duration = 50) {
+            if (hapticsEnabled && navigator.vibrate) {
+                navigator.vibrate(duration);
+            }
+        }
+        
+        function handlePasteCommand() {
+            showToast('Mengirim perintah Paste (Ctrl+V)');
+            sendFirestoreCommand('paste', 'ctrl_v');
+        }
+
+        // --- FUNGSI PENGIRIMAN FIREBASE ---
+        async function sendFirestoreCommand(type, key, mode = 'press') {
+            if (!docRef) {
+                return;
             }
             
-            function handlePasteCommand() {
-                showToast('Mengirim perintah Paste (Ctrl+V)');
-                sendFirestoreCommand('paste', 'ctrl_v');
+            const commandData = {
+                type: type,
+                key: key,
+                mode: mode,
+                timestamp: serverTimestampCommand()
+            };
+
+            try {
+                await setDocCommand(docRef, commandData);
+            } catch (e) {
+                console.error("Error mengirim perintah ke Firestore: ", e);
+                showToast("Gagal mengirim perintah. Koneksi terputus?", true);
             }
+        }
+        
+        // Listener Responsif (PointerDown)
+        function addResponsiveListener(element) {
+            if (!element) return;
+            let pressTimer = null; // Untuk mode Turbo
 
-            // --- FUNGSI PENGIRIMAN FIREBASE ---
-            async function sendFirestoreCommand(type, key, mode = 'press') {
-                if (!window.docRef) {
-                    return;
-                }
+            element.addEventListener('pointerdown', (e) => {
+                if (isCustomizing) return; 
+                e.preventDefault();
+                element.classList.add('active-state');
+                performHapticFeedback();
                 
-                const commandData = {
-                    type: type,
-                    key: key,
-                    mode: mode,
-                    timestamp: window.serverTimestampCommand() // Gunakan fungsi timestamp
-                };
-
-                try {
-                    await window.setDocCommand(window.docRef, commandData);
-                } catch (e) {
-                    console.error("Error mengirim perintah ke Firestore: ", e);
-                    showToast("Gagal mengirim perintah. Koneksi terputus?", true);
-                }
-            }
-            
-            // Listener Responsif (PointerDown)
-            function addResponsiveListener(element) {
-                if (!element) return;
-                let pressTimer = null; // Untuk mode Turbo
-
-                element.addEventListener('pointerdown', (e) => {
-                    if (isCustomizing) return; 
-                    e.preventDefault();
-                    element.classList.add('active-state');
-                    performHapticFeedback();
-                    
-                    const command = element.dataset.command || element.id;
-                    const mode = element.dataset.mode || 'press';
-                    
-                    if (command === 'SPECIAL_PASTE') { handlePasteCommand(); return; }
-                    if (command === 'JOYSTICK' || command === 'DPAD') return;
-
-                    if (mode === 'toggle') {
-                        // dihandle di pointerup
-                    } else if (mode === 'turbo') {
-                        sendFirestoreCommand('key_down', command, mode);
-                        if (pressTimer) clearInterval(pressTimer);
-                        pressTimer = setInterval(() => {
-                            sendFirestoreCommand('key_down', command, mode);
-                        }, 100);
-                    } else {
-                        sendFirestoreCommand('key_down', command, mode);
-                    }
-                });
+                const command = element.dataset.command || element.id;
+                const mode = element.dataset.mode || 'press';
                 
-                const onPointerUp = (e) => {
-                    if (isCustomizing) return;
-                    element.classList.remove('active-state');
-                    const command = element.dataset.command || element.id;
-                    const mode = element.dataset.mode || 'press';
-                    
-                    if(command === 'SPECIAL_PASTE' || command === 'JOYSTICK' || command === 'DPAD') return;
+                if (command === 'SPECIAL_PASTE') { handlePasteCommand(); return; }
+                if (command === 'JOYSTICK' || command === 'DPAD') return;
+
+                if (mode === 'toggle') {
+                    // dihandle di pointerup
+                } else if (mode === 'turbo') {
+                    sendFirestoreCommand('key_down', command, mode);
                     if (pressTimer) clearInterval(pressTimer);
-                    
-                    if (mode === 'toggle') {
-                        sendFirestoreCommand('key_press', command, mode); // Kirim sbg 'press'
-                    } else {
-                        sendFirestoreCommand('key_up', command, mode);
-                    }
-                };
+                    pressTimer = setInterval(() => {
+                        sendFirestoreCommand('key_down', command, mode);
+                    }, 100);
+                } else {
+                    sendFirestoreCommand('key_down', command, mode);
+                }
+            });
+            
+            const onPointerUp = (e) => {
+                if (isCustomizing) return;
+                element.classList.remove('active-state');
+                const command = element.dataset.command || element.id;
+                const mode = element.dataset.mode || 'press';
                 
-                element.addEventListener('pointerup', onPointerUp);
-                element.addEventListener('pointerleave', onPointerUp);
-                element.addEventListener('pointercancel', onPointerUp);
-            }
+                if(command === 'SPECIAL_PASTE' || command === 'JOYSTICK' || command === 'DPAD') return;
+                if (pressTimer) clearInterval(pressTimer);
+                
+                if (mode === 'toggle') {
+                    sendFirestoreCommand('key_press', command, mode); // Kirim sbg 'press'
+                } else {
+                    sendFirestoreCommand('key_up', command, mode);
+                }
+            };
             
-            document.querySelectorAll('.draggable[data-command]').forEach(addResponsiveListener);
-            
-            if (fullscreenBtn) {
-                fullscreenBtn.addEventListener('click', () => {
-                    if (!document.fullscreenElement) {
-                        if (remotePage) remotePage.requestFullscreen();
-                    } 
-                    else { document.exitFullscreen(); }
-                    closeModal(settingsModal);
-                });
-            }
-            
-            if (buttonOpacitySlider) {
-                buttonOpacitySlider.addEventListener('input', (e) => {
-                    const opacity = e.target.value / 100;
-                    if (opacityValue) opacityValue.textContent = e.target.value;
-                    document.documentElement.style.setProperty('--button-opacity', opacity.toFixed(2));
-                });
-            }
+            element.addEventListener('pointerup', onPointerUp);
+            element.addEventListener('pointerleave', onPointerUp);
+            element.addEventListener('pointercancel', onPointerUp);
+        }
+        
+        document.querySelectorAll('.draggable[data-command]').forEach(addResponsiveListener);
+        
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    if (remotePage) remotePage.requestFullscreen();
+                } 
+                else { document.exitFullscreen(); }
+                closeModal(settingsModal);
+            });
+        }
+        
+        if (buttonOpacitySlider) {
+            buttonOpacitySlider.addEventListener('input', (e) => {
+                const opacity = e.target.value / 100;
+                if (opacityValue) opacityValue.textContent = e.target.value;
+                document.documentElement.style.setProperty('--button-opacity', opacity.toFixed(2));
+            });
+        }
 
-            // Simulasi Simpan/Muat Layout
-            if (saveLayoutBtn) {
-                saveLayoutBtn.addEventListener('click', () => {
-                    const layoutName = saveLayoutInput.value;
-                    if (!layoutName) {
-                        showToast('Masukkan nama layout', true);
-                        return;
-                    }
-                    const newLayout = { id: Date.now(), name: layoutName };
-                    savedLayouts.push(newLayout);
-                    updateLayoutList();
-                    saveLayoutInput.value = '';
-                    showToast(`Layout "${layoutName}" disimpan!`);
-                });
-            }
-            
-            if (loadLayoutBtn) {
-                loadLayoutBtn.addEventListener('click', () => {
-                    const code = loadLayoutInput.value;
-                    if (!code) {
-                        showToast('Masukkan kode share', true);
-                        return;
-                    }
-                    showToast(`Memuat layout dari kode... (Simulasi)`);
-                    loadLayoutInput.value = '';
-                });
-            }
-
-            function updateLayoutList() {
-                if (!savedLayoutsList) return;
-                if (savedLayouts.length === 0) {
-                    savedLayoutsList.innerHTML = `<p class="text-gray-400 text-sm">Belum ada layout yang disimpan.</p>`;
+        // Simulasi Simpan/Muat Layout
+        if (saveLayoutBtn) {
+            saveLayoutBtn.addEventListener('click', () => {
+                const layoutName = saveLayoutInput.value;
+                if (!layoutName) {
+                    showToast('Masukkan nama layout', true);
                     return;
                 }
-                savedLayoutsList.innerHTML = '';
-                savedLayouts.forEach(layout => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center justify-between p-3 bg-gray-700 rounded-lg';
-                    div.innerHTML = `
-                        <span class="font-semibold">${layout.name}</span>
-                        <div class="flex gap-2">
-                            <button class="text-sm text-green-400" data-load-id="${layout.id}">Muat</button>
-                            <button class="text-sm text-blue-400" data-share-id="${layout.id}">Share</button>
-                            <button class="text-sm text-red-400" data-delete-id="${layout.id}">Hapus</button>
-                        </div>
-                    `;
-                    savedLayoutsList.appendChild(div);
-                });
+                const newLayout = { id: Date.now(), name: layoutName };
+                savedLayouts.push(newLayout);
+                updateLayoutList();
+                saveLayoutInput.value = '';
+                showToast(`Layout "${layoutName}" disimpan!`);
+            });
+        }
+        
+        if (loadLayoutBtn) {
+            loadLayoutBtn.addEventListener('click', () => {
+                const code = loadLayoutInput.value;
+                if (!code) {
+                    showToast('Masukkan kode share', true);
+                    return;
+                }
+                showToast(`Memuat layout dari kode... (Simulasi)`);
+                loadLayoutInput.value = '';
+            });
+        }
+
+        function updateLayoutList() {
+            if (!savedLayoutsList) return;
+            if (savedLayouts.length === 0) {
+                savedLayoutsList.innerHTML = `<p class="text-gray-400 text-sm">Belum ada layout yang disimpan.</p>`;
+                return;
             }
+            savedLayoutsList.innerHTML = '';
+            savedLayouts.forEach(layout => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-gray-700 rounded-lg';
+                div.innerHTML = `
+                    <span class="font-semibold">${layout.name}</span>
+                    <div class="flex gap-2">
+                        <button class="text-sm text-green-400" data-load-id="${layout.id}">Muat</button>
+                        <button class="text-sm text-blue-400" data-share-id="${layout.id}">Share</button>
+                        <button class="text-sm text-red-400" data-delete-id="${layout.id}">Hapus</button>
+                    </div>
+                `;
+                savedLayoutsList.appendChild(div);
+            });
+        }
 
-            if (savedLayoutsList) {
-                savedLayoutsList.addEventListener('click', (e) => {
-                    const target = e.target;
-                    if (target.dataset.loadId) {
-                        showToast(`Memuat layout... (Simulasi)`);
-                        closeModal(settingsModal);
+        if (savedLayoutsList) {
+            savedLayoutsList.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.dataset.loadId) {
+                    showToast(`Memuat layout... (Simulasi)`);
+                    closeModal(settingsModal);
+                }
+                if (target.dataset.shareId) {
+                    const shareCode = `XYC_SHARE_${Date.now()}`;
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(shareCode).then(() => {
+                            showToast(`Kode share disalin!`);
+                        });
+                    } else {
+                        showToast(`Kode Share: ${shareCode}`);
                     }
-                    if (target.dataset.shareId) {
-                        const shareCode = `XYC_SHARE_${Date.now()}`;
-                        if (navigator.clipboard) {
-                            navigator.clipboard.writeText(shareCode).then(() => {
-                                showToast(`Kode share disalin!`);
-                            });
-                        } else {
-                            showToast(`Kode Share: ${shareCode}`);
-                        }
-                    }
-                    if (target.dataset.deleteId) {
-                        const id = parseInt(target.dataset.deleteId);
-                        savedLayouts = savedLayouts.filter(l => l.id !== id);
-                        updateLayoutList();
-                        showToast(`Layout dihapus.`);
-                    }
-                });
-            }
+                }
+                if (target.dataset.deleteId) {
+                    const id = parseInt(target.dataset.deleteId);
+                    savedLayouts = savedLayouts.filter(l => l.id !== id);
+                    updateLayoutList();
+                    showToast(`Layout dihapus.`);
+                }
+            });
+        }
 
-            updateLayoutList();
+        updateLayoutList();
 
-        }); // --- TUTUP DARI 'DOMContentLoaded' ---
     </script>
 </body>
 </html>
