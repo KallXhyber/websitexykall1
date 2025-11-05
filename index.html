@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, user-scalable=no">
+    <title>XyCloud | NextGeneration</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+</head>
+<body class="bg-black text-white overflow-hidden h-screen">
+
+    <div id="login-page" class="min-h-screen flex flex-col">
+        <header id="login-header">
+            <div class="login-logo">Xy<span>Cloud</span></div>
+            <button id="subscribe-btn" class="subscribe-btn" data-premium-feature="true">
+                <i class="fas fa-crown"></i>
+                Berlangganan
+            </button>
+        </header>
+        
+        <div class="login-content">
+            <div class="login-card">
+                <div class="text-center mb-8">
+                    <img src="https://i.ibb.co/tpXj7XBj/Proyek-Baru-78-AF0-BCF8.png" 
+                         alt="Logo XyCloud" 
+                         class="w-24 h-24 mx-auto mb-4">
+                    <h2 class="text-3xl font-extrabold text-white mt-4">Selamat Datang</h2>
+                    <p class="text-gray-400">Hubungkan ke rig Anda dari mana saja.</p>
+                </div>
+                <form id="login-form">
+                    <div class="mb-5">
+                        <label for="client-id" class="form-label">Partner ID</label>
+                        <input type="text" id="client-id" value="GAMING-PC-01" class="login-input" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" value="••••••••" class="login-input" required>
+                    </div>
+                    <button type="submit" id="connect-btn" class="login-btn">
+                        Connect
+                    </button>
+                    <div id="loading-spinner" class="hidden text-center mt-4">
+                        <svg class="animate-spin h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span class="ml-2 align-middle">Authenticating...</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="remote-page" class="hidden h-screen flex flex-col relative">
+        <div class="flex-grow bg-black flex items-center justify-center p-0 overflow-auto relative h-full">
+            <div id="remote-content" class="w-full h-full aspect-video bg-gray-700 relative overflow-hidden">
+                <img src="https://i.ibb.co/gL4FFdTz/Windows-11-desktop-wallpaper.jpg" 
+                     class="w-full h-full object-cover" 
+                     alt="Simulasi stream Windows 11">
+                
+                <div id="stats-overlay" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm p-2 rounded-lg font-mono text-sm text-green-400">
+                    <div>Ping: <span class="font-bold">15ms</span></div>
+                    <div>FPS: <span class="font-bold">120</span></div>
+                </div>
+                
+                <div id="custom-ui-overlay" class="absolute inset-0 z-30">
+                    <div id="drag-lmb" class="draggable mouse-btn-v8" style="top: 55%; left: 8%;" data-label="Mouse Kiri" data-command="LMB" data-scale="1.0" data-style="circle" data-mode="press">
+                        <span class="edit-btn-overlay"><i class="fas fa-cog"></i></span>
+                        <i class="fas fa-mouse"></i>
+                        <span class="mouse-dot bg-blue-500" style="left: 0.65rem;"></span>
+                    </div>
+                    <div id="drag-rmb" class="draggable mouse-btn-v8" style="top: 55%; left: 22%;" data-label="Mouse Kanan" data-command="RMB" data-scale="1.0" data-style="circle" data-mode="press">
+                        <span class="edit-btn-overlay"><i class="fas fa-cog"></i></span>
+                        <i class="fas fa-mouse"></i>
+                        <span class="mouse-dot bg-red-500" style="right: 0.65rem;"></span>
+                    </div>
+                    <div id="drag-joystick" class="draggable joystick-base" style="top: 50%; left: 70%;" data-label="Joystick Analog" data-command="JOYSTICK" data-scale="1.0" data-style="analog" data-mode="press">
+                        <span class="edit-btn-overlay"><i class="fas fa-cog"></i></span>
+                        <div class="joystick-stick"></div>
+                    </div>
+                    <div id="drag-mic" class="draggable" style="top: 30%; left: 22%;" data-label="Mikrofon" data-command="MIC_TOGGLE" data-scale="1.0" data-style="circle" data-mode="toggle">
+                        <span class="edit-btn-overlay"><i class="fas fa-cog"></i></span>
+                        <i id="mic-icon" class="fas fa-microphone-slash fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="settings-btn" class="absolute top-4 right-4 z-40 bg-black/60 backdrop-blur-md p-3 rounded-full text-white hover:bg-indigo-600 transition-colors w-12 h-12 flex items-center justify-center">
+            <i class="fas fa-cog fa-lg"></i>
+        </button>
+        <button id="global-keyboard-btn" class="absolute bottom-4 right-4 z-40 bg-black/60 backdrop-blur-md p-3 rounded-full text-white hover:bg-indigo-600 transition-colors w-14 h-14 flex items-center justify-center">
+            <i class="fas fa-keyboard fa-lg"></i>
+        </button>
+        
+        <div id="customize-bar" class="hidden absolute top-0 left-0 right-0 p-3 bg-gray-900/80 backdrop-blur-lg z-40 flex justify-center gap-4 shadow-lg">
+            <button id="add-key-btn" class="customize-btn"><i class="fas fa-plus mr-2"></i> Tambah Tombol</button>
+            <button id="add-joystick-btn" class="customize-btn"><i class="fas fa-compass mr-2"></i> Tambah Kontrol</button>
+            <button id="exit-customize-btn" class="customize-btn exit-btn"><i class="fas fa-check mr-2"></i> Simpan & Keluar</button>
+        </div>
+        
+        <div id="settings-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+            </div>
+
+        <div id="binding-keyboard-modal" class="hidden modal fixed inset-0 p-4 z-55 flex flex-col items-center justify-center opacity-0 overflow-auto">
+            <div class="w-full max-w-5xl p-4 bg-gray-800 rounded-xl border border-gray-700">
+                <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span> </div>
+                <div class="kbd-row"><span class="kbd-key" data-key="`">`</span> </div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span> </div>
+                <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.8;">Caps</span> </div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 2.2;">Shift</span> </div>
+                <div class="kbd-row"><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta">Win</span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key=" " style="flex-grow: 6;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE" title="Paste Clipboard"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="Alt">Alt</span><span class="kbd-key" data-key="Control">Ctrl</span> </div>
+            </div>
+            <button id="close-binding-keyboard-btn" class="mt-4 bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold">Batal</button>
+        </div>
+        
+        <div id="add-joystick-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+            </div>
+
+        <div id="edit-key-modal" class="hidden modal fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+            </div>
+
+        <div id="sliding-keyboard" class="fixed bottom-0 left-0 right-0 z-40">
+            <button id="close-sliding-keyboard-btn"><i class="fas fa-times"></i></button>
+            <div id="sliding-keyboard-layers" class="w-full max-w-5xl mx-auto flex justify-between">
+                
+                <div class="kbd-left-half w-[48%]">
+                    <div id="kbd-layer-main-left" class="kbd-layer active">
+                        <div class="kbd-row"><span class="kbd-key" data-key="Escape">Esc</span><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Tab" style="flex-grow: 1.5;">Tab</span><span class="kbd-key" data-key="Q">Q</span><span class="kbd-key" data-key="W">W</span><span class="kbd-key" data-key="E">E</span><span class="kbd-key" data-key="R">R</span><span class="kbd-key" data-key="T">T</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="CapsLock" style="flex-grow: 1.5;">Caps</span><span class="kbd-key" data-key="A">A</span><span class="kbd-key" data-key="S">S</span><span class="kbd-key" data-key="D">D</span><span class="kbd-key" data-key="F">F</span><span class="kbd-key" data-key="G">G</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span><span class="kbd-key" data-key="Z">Z</span><span class="kbd-key" data-key="X">X</span><span class="kbd-key" data-key="C">C</span><span class="kbd-key" data-key="V">V</span><span class="kbd-key" data-key="B">B</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="Control">Ctrl</span><span class="kbd-key" data-key="Meta">Win</span><span class="kbd-key" data-key="Alt">Alt</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols1-left" class="kbd-layer">
+                        <div class="kbd-row"><span class="kbd-key" data-key="1">1</span><span class="kbd-key" data-key="2">2</span><span class="kbd-key" data-key="3">3</span><span class="kbd-key" data-key="4">4</span><span class="kbd-key" data-key="5">5</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="@">@</span><span class="kbd-key" data-key="#">#</span><span class="kbd-key" data-key="$">$</span><span class="kbd-key" data-key="%">%</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="#+={" style="flex-grow: 1.5;">#{<</span><span class="kbd-key" data-key="`">`</span><span class="kbd-key" data-key="~">~</span><span class="kbd-key" data-key="&">&</span><span class="kbd-key" data-key="*">*</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="(">(</span><span class="kbd-key" data-key=")">)</span><span class="kbd-key" data-key="-">-</span><span class="kbd-key" data-key="_">_</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols2-left" class="kbd-layer">
+                        <div class="kbd-row"><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span><span class="kbd-key" data-key="{">{</span><span class="kbd-key" data-key="}">}</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="<"><</span><span class="kbd-key" data-key=">">></span><span class="kbd-key" data-key="\"> \ </span><span class="kbd-key" data-key="|">|</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?123" style="flex-grow: 1.5;">?123</span><span class="kbd-key" data-key="€">€</span><span class="kbd-key" data-key="£">£</span><span class="kbd-key" data-key="¥">¥</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="ABC" style="flex-grow: 1.5;">ABC</span><span class="kbd-key" data-key="©">©</span><span class="kbd-key" data-key="®">®</span><span class="kbd-key" data-key="™">™</span></div>
+                    </div>
+                </div>
+
+                <div class="kbd-right-half w-[48%]">
+                    <div id="kbd-layer-main-right" class="kbd-layer active">
+                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="Y">Y</span><span class="kbd-key" data-key="U">U</span><span class="kbd-key" data-key="I">I</span><span class="kbd-key" data-key="O">O</span><span class="kbd-key" data-key="P">P</span><span class="kbd-key" data-key="[">[</span><span class="kbd-key" data-key="]">]</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="H">H</span><span class="kbd-key" data-key="J">J</span><span class="kbd-key" data-key="K">K</span><span class="kbd-key" data-key="L">L</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key="'">'</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="N">N</span><span class="kbd-key" data-key="M">M</span><span class="kbd-key" data-key=",">,</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="/">/</span><span class="kbd-key" data-key="Shift" style="flex-grow: 1.5;">Shift</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="SPECIAL_PASTE"><i class="fas fa-paste"></i></span><span class="kbd-key" data-key="ArrowLeft"><i class="fas fa-arrow-left"></i></span><span class="kbd-key" data-key="ArrowUp"><i class="fas fa-arrow-up"></i></span><span class="kbd-key" data-key="ArrowDown"><i class="fas fa-arrow-down"></i></span><span class="kbd-key" data-key="ArrowRight"><i class="fas fa-arrow-right"></i></span></div>
+                    </div>
+                    <div id="kbd-layer-symbols1-right" class="kbd-layer">
+                        <div class="kbd-row"><span class="kbd-key" data-key="6">6</span><span class="kbd-key" data-key="7">7</span><span class="kbd-key" data-key="8">8</span><span class="kbd-key" data-key="9">9</span><span class="kbd-key" data-key="0">0</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="^">^</span><span class="kbd-key" data-key="=">=</span><span class="kbd-key" data-key="+">+</span><span class="kbd-key" data-key=";">;</span><span class="kbd-key" data-key=":">:</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key="?">?</span><span class="kbd-key" data-key="!">!</span><span class="kbd-key" data-key="&quot;">"</span><span class="kbd-key" data-key="'">'</span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key=".">.</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                    </div>
+                    <div id="kbd-layer-symbols2-right" class="kbd-layer">
+                        <div class="kbd-row"><span class="kbd-key" data-key="•"> • </span><span class="kbd-key" data-key="§">§</span><span class="kbd-key" data-key="°">°</span><span class="kbd-key" data-key="Backspace"><i class="fas fa-backspace"></i></span></div>
+                        <div class="kbd-row"><span class="kbd-key" data-key=" " style="flex-grow: 4;">Space</span><span class="kbd-key" data-key="Enter" style="flex-grow: 1.5;">Enter</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div> <div id="premium-modal" class="hidden modal fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 scale-95">
+        </div>
+
+    <div id="toast-notification" class="bg-indigo-600 text-white py-3 px-5 rounded-lg shadow-lg">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
