@@ -11,8 +11,133 @@
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     
-    <link rel="stylesheet" href="style.css">
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      // PERUBAHAN: Kita butuh onSnapshot untuk mendengarkan 'answer'
+      import { getFirestore, doc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      
+      // --- KONFIGURASI FIREBASE-MU (DARI v27) ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyAqBIqFt3AKBavzVNr-VS9AlS7drPXXfcg",
+        authDomain: "kall-e4441.firebaseapp.com",
+        projectId: "kall-e4441",
+        storageBucket: "kall-e4441.firebasestorage.app",
+        messagingSenderId: "232976172726",
+        appId: "1:232976172726:web:3cd3f6338a4ec52ba58817",
+        measurementId: "G-YQBDKK616N"
+      };
+      
+      try {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.db = db;
+        window.createDocRef = (db, collection, id) => doc(db, collection, id);
+        window.setDocCommand = setDoc;
+        window.serverTimestampCommand = serverTimestamp;
+        window.onSnapshotCommand = onSnapshot; // <-- FUNGSI BARU
+        
+        console.log("Firebase v34 Client Loaded.");
+      } catch (e) {
+        console.error("Firebase GAGAL di-load.", e);
+        alert("Error Konfigurasi Firebase! Cek konsol (F12).");
+      }
+    </script>
     
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        :root {
+            --brand-color: #4f46e5; --brand-color-dark: #4338ca;
+            --brand-color-hover: rgba(79, 70, 229, 0.4);
+            --brand-gradient: linear-gradient(90deg, #4f46e5, #a855f7);
+            --button-opacity: 0.5; 
+        }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; height: 100vh; }
+        #login-page { background: #0a0a0a; color: #eee; display: flex; flex-direction: column; min-height: 100vh; }
+        #login-header { width: 100%; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; border-bottom: 1px solid #222; }
+        .login-logo { font-size: 1.5rem; font-weight: 800; color: white; }
+        .login-logo span { color: var(--brand-color); }
+        .subscribe-btn { background: transparent; border: 2px solid var(--brand-color); color: var(--brand-color); padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.3s ease; }
+        .subscribe-btn:hover { background: var(--brand-color); color: white; box-shadow: 0 0 15px var(--brand-color-hover); }
+        .subscribe-btn .fa-crown { color: #facc15; margin-right: 0.5rem; }
+        .login-content { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .login-card { background: #111; border: 1px solid #222; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
+        .login-input { background: #1a1a1a; border: 1px solid #333; color: #eee; width: 100%; padding: 0.75rem 1.25rem; border-radius: 9999px; }
+        .login-input:focus { outline: none; border-color: var(--brand-color); box-shadow: 0 0 10px var(--brand-color-hover); }
+        .login-btn { background-color: var(--brand-color); transition: all 0.3s ease; box-shadow: 0 0 15px var(--brand-color-hover); width: 100%; color: white; font-weight: 700; padding: 0.75rem 1rem; border-radius: 9999px; font-size: 1rem; }
+        .login-btn:hover { background-color: var(--brand-color-dark); box-shadow: 0 0 25px var(--brand-color-hover); }
+        .help-btn-outline { background-color: transparent; border: 1px solid #444; color: #888; width: 100%; padding: 0.6rem 1rem; border-radius: 9999px; font-size: 0.875rem; margin-top: 1.5rem; transition: all 0.2s ease; }
+        .help-btn-outline:hover { border-color: #777; color: #ccc; }
+        #toast-notification { position: fixed; top: 20px; right: 20px; transform: translateX(120%); transition: transform 0.3s ease-in-out; z-index: 100; }
+        #toast-notification.show { transform: translateX(0); }
+        .draggable { touch-action: none; user-select: none; position: absolute; z-index: 30; background-color: rgba(10, 10, 10, var(--button-opacity)); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: white; border-radius: 9999px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.2s ease; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+        .draggable.text-btn { width: auto; height: 56px; padding: 0 1.25rem; border-radius: 0.75rem; font-size: 0.875rem; }
+        .d-pad-base { background: transparent !important; backdrop-filter: none; border: none; box-shadow: none; width: 150px; height: 150px; display: grid; grid-template-rows: 1fr 1fr 1fr; grid-template-columns: 1fr 1fr 1fr; border-radius: 0; }
+        .d-pad-btn { background-color: rgba(10, 10, 10, var(--button-opacity)); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: bold; }
+        .d-pad-btn.active-state { background-color: var(--brand-color-hover); }
+        .d-pad-up { grid-row: 1; grid-column: 2; border-radius: 0.5rem 0.5rem 0 0; }
+        .d-pad-left { grid-row: 2; grid-column: 1; border-radius: 0.5rem 0 0 0.5rem; }
+        .d-pad-right { grid-row: 2; grid-column: 3; border-radius: 0 0.5rem 0.5rem 0; }
+        .d-pad-down { grid-row: 3; grid-column: 2; border-radius: 0 0 0.5rem 0.5rem; }
+        .d-pad-center { grid-row: 2; grid-column: 2; }
+        .draggable.active-state { background-color: var(--brand-color-hover); border-color: var(--brand-color); transform: scale(0.95); }
+        .draggable.active-state .mouse-dot { opacity: 1; }
+        .mouse-btn-v8 { font-size: 1.75rem; position: relative; }
+        .mouse-dot { position: absolute; width: 0.65rem; height: 0.65rem; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.5); top: 0.65rem; opacity: 0; transition: opacity 0.1s ease; }
+        .joystick-base { width: 130px; height: 130px; }
+        .joystick-stick { width: 60px; height: 60px; background-color: rgba(0, 0, 0, 0.4); border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 9999px; position: absolute; z-index: 31; cursor: grab; }
+        #customize-bar { z-index: 40; }
+        .customize-btn { background-color: var(--brand-color); color: white; font-weight: 600; padding: 0.65rem 1.25rem; border-radius: 9999px; transition: all 0.3s ease; box-shadow: 0 5px 20px var(--brand-color-hover); }
+        .customize-btn:hover { background-color: var(--brand-color-dark); transform: translateY(-2px); }
+        .customize-btn.exit-btn { background-color: #22c55e; }
+        .customize-btn.exit-btn:hover { background-color: #16a34a; }
+        .edit-btn-overlay { position: absolute; top: -5px; right: -5px; width: 24px; height: 24px; background-color: var(--brand-color); color: white; border-radius: 9999px; display: none; align-items: center; justify-content: center; font-size: 0.75rem; cursor: pointer; z-index: 35; }
+        .customization-active .draggable:hover .edit-btn-overlay { display: flex; }
+        .customization-active .draggable { cursor: move; border-color: var(--brand-color); box-shadow: 0 0 25px var(--brand-color-hover), 0 0 10px rgba(255, 255, 255, 0.5) inset; }
+        .customization-active .joystick-stick, .customization-active .d-pad-btn { display: none; }
+        .customization-active .d-pad-base { background: rgba(79, 70, 229, 0.2); border: 2px dashed var(--brand-color); border-radius: 0.5rem; }
+        .modal { transition: opacity 0.2s ease, transform 0.2s ease; z-index: 50; }
+        .modal-content { background-color: #111; border: 1px solid #333; }
+        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; color: #6B7280; transition: color 0.2s ease; }
+        .modal-close-btn:hover { color: #fff; }
+        .tab-btn { background: #222; color: #aaa; padding: 0.75rem 1rem; border-bottom: 3px solid transparent; transition: all 0.2s ease; }
+        .tab-btn:hover { background: #333; color: #fff; }
+        .tab-btn.active { color: var(--brand-color); border-bottom-color: var(--brand-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .choice-btn { background: #222; border: 1px solid #444; color: #ccc; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease; }
+        .choice-btn:hover { background: #333; color: #fff; }
+        .choice-btn.active { background: var(--brand-color); color: white; border-color: var(--brand-color); }
+        .choice-btn.premium { color: #facc15; }
+        .premium-icon { color: #facc15; margin-left: 0.5rem; font-size: 0.75rem; }
+        .premium-label-wrapper { display: flex; align-items: center; justify-content: space-between; }
+        .premium-card { background: #1a1a1a; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #333; transition: all 0.3s ease; }
+        .premium-card-popular { border-color: var(--brand-color); box-shadow: 0 0 30px var(--brand-color-hover); }
+        .premium-feature-list { list-style-type: none; padding: 0; margin-top: 1.5rem; space-y: 0.75rem; }
+        .premium-feature-list li { display: flex; align-items: center; font-size: 1rem; color: #d1d5db; }
+        .premium-feature-list .fa-check-circle { color: var(--brand-color); margin-right: 0.75rem; }
+        #binding-keyboard-modal { z-index: 55; background-color: rgba(17, 24, 39, 0.95); }
+        #sliding-keyboard { position: fixed; bottom: 0; left: 0; right: 0; background-color: rgba(17, 24, 39, 0.90); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translateY(100%); transition: transform 0.3s ease-in-out; z-index: 40; padding: 0.5rem; padding-bottom: 1.5rem; border-top: 1px solid #444; }
+        #sliding-keyboard.show { transform: translateY(0); }
+        #close-sliding-keyboard-btn { position: absolute; top: 0.5rem; right: 0.5rem; background-color: rgba(255, 255, 255, 0.1); color: white; border-radius: 9999px; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        #close-sliding-keyboard-btn:active { background-color: rgba(255, 255, 255, 0.2); }
+        .kbd-layer { display: none; }
+        .kbd-layer.active { display: block; }
+        .kbd-left-half, .kbd-right-half { width: 48%; }
+        #sliding-keyboard-layers { display: flex; justify-content: space-between; }
+        .kbd-key { background-color: #4B5563; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.6rem 0.4rem; font-weight: 600; color: white; cursor: pointer; transition: background-color 0.1s ease; display: flex; justify-content: center; align-items: center; min-width: 32px; text-align: center; flex-grow: 1; flex-basis: 0; -webkit-tap-highlight-color: transparent; }
+        .kbd-key:active { background-color: #374151; }
+        .kbd-row { display: flex; justify-content: center; gap: 0.25rem; margin-bottom: 0.25rem; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #4B5563; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--brand-color); }
+        input:checked + .slider:before { transform: translateX(16px); }
+        .form-input { background: #222; border: 1px solid #444; color: #fff; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; }
+        .form-label { display: block; text-sm font-medium text-gray-300 mb-2; }
+        #loading-spinner svg { width: 1.25rem; height: 1.25rem; display: inline-block; }
+    </style>
 </head>
 <body class="bg-black text-white overflow-hidden h-screen">
 
@@ -71,7 +196,8 @@
         <div class="flex-grow bg-black flex items-center justify-center p-0 overflow-auto relative h-full">
             <div id="remote-content" class="w-full h-full aspect-video bg-gray-700 relative overflow-hidden">
                 
-                <video id="video-stream" class="w-full h-full object-cover" autoplay playsinline muted></video>
+                <video id="video-stream" class="w-full h-full object-cover" autoplay playsinline muted>
+                    </video>
                 
                 <div id="stats-overlay" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm p-2 rounded-lg font-mono text-sm text-green-400">
                     <div>Ping: <span class="font-bold">15ms</span></div>
@@ -134,7 +260,7 @@
                             <label class="form-label">Resolusi Stream</label>
                             <div class="flex gap-2">
                                 <button class="choice-btn active" data-res="720p">720p</button>
-                                <button class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
+                                <button id="res-1080p-btn" class="choice-btn premium" data-premium-feature="true">1080p <i class="premium-icon fas fa-crown"></i></button>
                                 <button class="choice-btn" data-res="480p">480p</button>
                             </div>
                         </div>
@@ -158,6 +284,7 @@
                     
                     <div id="tab-controls" class="tab-content">
                         <button id="enter-customize-btn" class="w-full text-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold"><i class="fas fa-arrows-up-down-left-right fa-fw mr-2"></i> Kustomisasi Tombol di Layar</button>
+                        
                         <div class="mt-4">
                             <label class="form-label">Mode Mouse (Layar Sentuh)</label>
                             <div class="flex gap-2">
@@ -165,6 +292,7 @@
                                 <button class="choice-btn" data-mouse-mode="trackpad">Trackpad (Geser Kursor)</button>
                             </div>
                         </div>
+                        
                         <div class="mt-4">
                             <label class="form-label">Sensitivitas Mouse (Remote)</label>
                             <input type="range" min="10" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
@@ -228,7 +356,9 @@
                             <label class="form-label">Volume Mic</label>
                             <input type="range" min="0" max="100" value="80" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                         </div>
+                        
                         <div class="border-t border-gray-700 my-6"></div>
+                        
                         <div class="grid grid-cols-2 gap-4">
                             <button id="screenshot-btn" class="choice-btn"><i class="fas fa-camera mr-2"></i> Ambil Screenshot</button>
                             <button id="record-btn" class="choice-btn" data-premium-feature="true"><i class="fas fa-video mr-2"></i> Mulai Merekam <i class="premium-icon fas fa-crown"></i></button>
@@ -437,7 +567,7 @@
           serverTimestampCommand = serverTimestamp;
           onSnapshotCommand = onSnapshot;
           
-          console.log("Firebase v32 Client Loaded.");
+          console.log("Firebase v34 Client Loaded.");
         } catch (e) {
           console.error("Firebase GAGAL di-load.", e);
           alert("Error Konfigurasi Firebase! Cek konsol (F12).");
@@ -779,11 +909,8 @@
             const target = e.target.closest('[data-premium-feature="true"]');
             if (target) {
                 if (!isPremium) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (settingsModal && !settingsModal.classList.contains('hidden')) {
-                        closeModal(settingsModal);
-                    }
+                    e.preventDefault(); e.stopPropagation();
+                    if (settingsModal && !settingsModal.classList.contains('hidden')) { closeModal(settingsModal); }
                     openModal(premiumModal);
                 }
             }
@@ -811,41 +938,24 @@
             settingsModal.addEventListener('click', (e) => {
                 const targetBtn = e.target.closest('.choice-btn:not([data-premium-feature="true"])');
                 if (!targetBtn) return;
-                
                 const parent = targetBtn.parentElement;
                 if (parent) {
-                    parent.querySelectorAll('.choice-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
+                    parent.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active'));
                 }
                 targetBtn.classList.add('active');
             });
         }
 
-        if (toggleStatsBtn) {
-            toggleStatsBtn.addEventListener('change', (e) => {
-                 if (statsOverlay) statsOverlay.classList.toggle('hidden', !e.target.checked);
-            });
-        }
-        if (toggleHapticsBtn) {
-            toggleHapticsBtn.addEventListener('change', (e) => {
-                hapticsEnabled = e.target.checked;
-                showToast(hapticsEnabled ? 'Getar Aktif' : 'Getar Nonaktif');
-                if(hapticsEnabled) performHapticFeedback(100);
-            });
-        }
+        if (toggleStatsBtn) { toggleStatsBtn.addEventListener('change', (e) => { if (statsOverlay) statsOverlay.classList.toggle('hidden', !e.target.checked); }); }
+        if (toggleHapticsBtn) { toggleHapticsBtn.addEventListener('change', (e) => { hapticsEnabled = e.target.checked; showToast(hapticsEnabled ? 'Getar Aktif' : 'Getar Nonaktif'); if(hapticsEnabled) performHapticFeedback(100); }); }
         
         if (disconnectBtn) {
             disconnectBtn.addEventListener('click', () => {
-                cmdDocRef = null;
-                signalOfferDocRef = null;
-                signalAnswerDocRef = null;
+                cmdDocRef = null; signalOfferDocRef = null; signalAnswerDocRef = null;
                 if(signalListener) signalListener();
                 if(pc) { pc.close(); pc = null; }
-                
                 if (videoStreamEl) videoStreamEl.srcObject = null;
                 if (webrtcStatusEl) webrtcStatusEl.textContent = "Status: Idle...";
-                
                 if (remotePage) remotePage.style.display = 'none';
                 if (loginPage) loginPage.style.display = 'flex';
                 closeModal(settingsModal);
@@ -867,7 +977,6 @@
                 }
             });
         }
-        
         document.querySelectorAll('.draggable').forEach(addEditListener);
 
         function openEditModal(el) {
@@ -886,21 +995,7 @@
         }
         
         if (closeEditKeyModal) closeEditKeyModal.addEventListener('click', () => closeModal(editKeyModal));
-        
-        if (saveEditKeyBtn) {
-            saveEditKeyBtn.addEventListener('click', () => {
-                if (!currentEditingElement) return;
-                const newLabel = editKeyLabel.value, newScale = parseFloat(editKeySize.value) / 100, newStyle = editKeyStyleWrapper.querySelector('.active')?.dataset.style || currentEditingElement.dataset.style, newMode = editKeyModeWrapper.querySelector('.active')?.dataset.mode || currentEditingElement.dataset.mode;
-                currentEditingElement.dataset.label = newLabel; currentEditingElement.dataset.scale = newScale.toFixed(2); currentEditingElement.dataset.style = newStyle; currentEditingElement.dataset.mode = newMode;
-                const labelEl = currentEditingElement.querySelector('.btn-label');
-                if (labelEl) { if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE') { labelEl.textContent = newLabel; } }
-                if (newStyle === 'rectangle') { currentEditingElement.classList.add('text-btn'); } else { currentEditingElement.classList.remove('text-btn'); }
-                const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0, y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0;
-                currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`;
-                showToast('Tombol diperbarui!'); closeModal(editKeyModal); currentEditingElement = null;
-            });
-        }
-        
+        if (saveEditKeyBtn) { saveEditKeyBtn.addEventListener('click', () => { if (!currentEditingElement) return; const newLabel = editKeyLabel.value, newScale = parseFloat(editKeySize.value) / 100, newStyle = editKeyStyleWrapper.querySelector('.active')?.dataset.style || currentEditingElement.dataset.style, newMode = editKeyModeWrapper.querySelector('.active')?.dataset.mode || currentEditingElement.dataset.mode; currentEditingElement.dataset.label = newLabel; currentEditingElement.dataset.scale = newScale.toFixed(2); currentEditingElement.dataset.style = newStyle; currentEditingElement.dataset.mode = newMode; const labelEl = currentEditingElement.querySelector('.btn-label'); if (labelEl) { if(currentEditingElement.dataset.command !== 'SPECIAL_PASTE') { labelEl.textContent = newLabel; } } if (newStyle === 'rectangle') { currentEditingElement.classList.add('text-btn'); } else { currentEditingElement.classList.remove('text-btn'); } const x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0, y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0; currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`; showToast('Tombol diperbarui!'); closeModal(editKeyModal); currentEditingElement = null; }); }
         if (deleteKeyBtn) { deleteKeyBtn.addEventListener('click', () => { if (!currentEditingElement) return; currentEditingElement.remove(); showToast('Tombol dihapus'); closeModal(editKeyModal); currentEditingElement = null; }); }
         if (editKeySize) { editKeySize.addEventListener('input', (e) => { if (editKeySizeValue) editKeySizeValue.textContent = e.target.value; if (currentEditingElement) { const newScale = parseFloat(e.target.value) / 100, x = parseFloat(currentEditingElement.getAttribute('data-x')) || 0, y = parseFloat(currentEditingElement.getAttribute('data-y')) || 0; currentEditingElement.style.transform = `translate(${x}px, ${y}px) scale(${newScale})`; } }); }
         if (editKeyStyleWrapper) { editKeyStyleWrapper.addEventListener('click', (e) => { const targetBtn = e.target.closest('.choice-btn'); if (!targetBtn) return; editKeyStyleWrapper.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('active')); targetBtn.classList.add('active'); }); }
